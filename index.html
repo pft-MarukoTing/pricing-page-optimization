@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose Your Perfect Pack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;800&family=Wix+Madefor+Display:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --text-strong: rgba(9, 22, 26, 0.95);
+    --text-weak: rgba(17, 24, 26, 0.65);
+    --text-weaker: rgba(17, 24, 26, 0.45);
+    --text-info: #1a74a8;
+    --brand: #03ade2;
+    --pro: #00789e;
+    --fill-disabled: rgba(17, 24, 26, 0.2);
+    --stroke-strong: rgba(17, 24, 26, 0.45);
+    --stroke-focus: rgba(3, 173, 226, 0.2);
+    --error: #de0000;
+    --font-display: "Wix Madefor Display", system-ui, sans-serif;
+    --font-body: "Roboto", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: #fff;
+    color: var(--text-strong);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  p { margin: 0; }
+  button { font: inherit; }
+
+  /* ---------- Page ---------- */
+  .page {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 83px 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero {
+    width: 100%;
+    padding: 130px 110px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+  .hero h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 40px;
+    line-height: 40px;
+    letter-spacing: -0.5px;
+    color: #212529;
+    text-align: center;
+  }
+  .tab-wrap { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .tabs {
+    width: 580px;
+    max-width: 100%;
+    background: #f0f0f0;
+    border-radius: 47px;
+    padding: 8px;
+    display: flex;
+  }
+  .tab {
+    flex: 1 1 0;
+    border: 0;
+    background: transparent;
+    padding: 16px;
+    border-radius: 41px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 32px;
+    color: #000;
+    cursor: pointer;
+    transition: background-color .2s, color .2s;
+  }
+  .tab.is-active {
+    color: #fff;
+    background-image: linear-gradient(0deg, rgba(3,173,226,0.2) 10.937%, rgba(0,104,215,0.2) 100%), linear-gradient(90deg, #03ade2, #03ade2);
+  }
+  .subtitle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-family: var(--font-display);
+    font-size: 18px;
+    line-height: 26px;
+    color: var(--text-strong);
+    text-align: center;
+  }
+  .subtitle img { width: 16.815px; height: 16.815px; transform: scaleY(-1); flex: none; }
+
+  /* ---------- Toolbar ---------- */
+  .plans {
+    width: 100%;
+    padding: 20px 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .toolbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .api-link {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px;
+    color: var(--brand);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 26px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .api-link img { width: 20px; height: 20px; transition: transform .2s; }
+  .api-link:hover img { transform: translateX(3px); }
+  .api-link.ghost { visibility: hidden; }
+  .currency {
+    width: 106px;
+    height: 32px;
+    border: 1px solid #cacce0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    font-size: 13px;
+    color: #000;
+    cursor: pointer;
+  }
+  .currency span { width: 55px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
+  .currency .sep { width: 1px; height: 16px; background: #cacce0; }
+  .currency img.chev { width: 7px; height: 16px; }
+
+  /* ---------- Cards ---------- */
+  .cards {
+    width: 100%;
+    display: flex;
+    gap: 32px;
+    align-items: stretch;
+    justify-content: center;
+  }
+  .card-col {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-top: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .card-col.paid { min-width: 360px; max-width: 420px; }
+  .card {
+    width: 100%;
+    background: #fff;
+    border-radius: 32px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    filter: drop-shadow(0 12px 15px rgba(0,0,0,0.25));
+  }
+  .card-col.free .card { flex: 1; }
+  .card.pro {
+    gap: 16px;
+    flex: 1;
+    filter: none;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    background-color: #fff;
+    background-image:
+      linear-gradient(180deg, rgba(255,255,255,0) 24.216%, #fff 60.266%),
+      url("data:image/svg+xml;utf8,<svg viewBox='0 0 380 608' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='0.20000000298023224'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(38.033 33.421 -24.429 27.256 -0.33454 4.7205)'><stop stop-color='rgba(217,255,111,1)' offset='0'/><stop stop-color='rgba(176,242,145,0.88)' offset='0.25'/><stop stop-color='rgba(135,228,179,0.76)' offset='0.5'/><stop stop-color='rgba(95,215,213,0.64)' offset='0.75'/><stop stop-color='rgba(54,201,247,0.52)' offset='1'/></radialGradient></defs></svg>");
+    background-size: 100% 100%;
+  }
+  .card-body { display: flex; flex-direction: column; gap: 16px; width: 100%; }
+
+  .plan-title {
+    padding: 12px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .plan-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 28px;
+    text-align: center;
+  }
+  .price-row { display: flex; align-items: baseline; justify-content: center; gap: 6px; width: 100%; flex-wrap: wrap; }
+  .price {
+    font-weight: 800;
+    font-size: 56px;
+    line-height: 64px;
+    letter-spacing: -1px;
+    color: #191919;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .card.pro .price { color: var(--pro); }
+
+  .strike { position: relative; display: inline-flex; align-items: center; }
+  .strike img { position: absolute; left: 0; width: 100%; height: 2px; top: 50%; transform: translateY(-50%); }
+  .og-price {
+    padding: 0 4px;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 32px;
+    color: var(--text-weaker);
+  }
+
+  .btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 28px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 28px;
+    cursor: pointer;
+    border: 0;
+    transition: filter .15s, transform .15s, background-color .15s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-outline {
+    background: rgba(255,255,255,0.01);
+    border: 1px solid var(--stroke-strong);
+    color: var(--text-strong);
+  }
+  .btn-outline:hover { background: rgba(17,24,26,0.04); }
+  .btn-primary { background: var(--brand); color: #fff; }
+  .btn-pro { background-image: linear-gradient(88.46deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%); color: #fff; }
+  .btn-primary:hover, .btn-pro:hover { filter: brightness(1.05); }
+
+  .features { padding: 8px; display: flex; flex-direction: column; gap: 12px; list-style: none; margin: 0; }
+  .features li { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 16px; line-height: 24px; color: #15171f; }
+  .features li img { width: 20px; height: 20px; flex: none; }
+  .hl { color: var(--brand); }
+
+  /* ---------- Credit slider ---------- */
+  .slider-block { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+  .slider-top { display: flex; flex-direction: column; gap: 6px; }
+  .credit-amount { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; }
+  .credit-amount > img { width: 20px; height: 20px; flex: none; }
+  .credit-amount .row { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; }
+  .credit { flex: 1; display: flex; align-items: baseline; gap: 4px; min-width: 0; }
+  .credit .num { font-weight: 600; font-size: 20px; line-height: 28px; font-variant-numeric: tabular-nums; }
+  .credit .unit { font-weight: 600; font-size: 16px; line-height: 24px; color: var(--text-weak); }
+  .per-credit { display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
+  .per-credit .val { font-weight: 600; font-size: 20px; line-height: 28px; font-variant-numeric: tabular-nums; }
+  .per-credit .suffix { font-size: 14px; line-height: 20px; }
+  .card.pro .per-credit .now { color: var(--pro); }
+  .og-per { padding: 0 2px; font-size: 14px; line-height: 20px; color: var(--text-weaker); }
+
+  .track {
+    position: relative;
+    height: 26px;
+    margin: -6px 0; /* handle (26px) overflows the 14px slider row */
+    touch-action: none;
+    cursor: pointer;
+    outline: none;
+    --pos: 0px;
+  }
+  .track .bar, .track .progress {
+    position: absolute;
+    top: 50%;
+    height: 6px;
+    margin-top: -3px;
+    border-radius: 19px;
+  }
+  .track .bar { left: 4px; right: 4px; background: var(--fill-disabled); }
+  .track .progress { left: 4px; width: calc(var(--pos) - 4px); background: var(--brand); }
+  .track .handle {
+    position: absolute;
+    top: 0;
+    left: var(--pos);
+    width: 26px;
+    height: 26px;
+    margin-left: -13px;
+    transition: transform .15s;
+  }
+  .track:not(.dragging) .progress { transition: width .18s ease; }
+  .track:not(.dragging) .handle { transition: left .18s ease, transform .15s; }
+  .track:hover .handle, .track.dragging .handle { transform: scale(1.08); }
+  .track:focus-visible .handle { border-radius: 50%; box-shadow: 0 0 0 3px rgba(3,173,226,.35); }
+  .ticks { display: flex; justify-content: space-between; padding: 0 7px; }
+  .ticks i { width: 2px; height: 8px; border-radius: 2px; background: var(--fill-disabled); }
+  .labels { display: flex; align-items: center; gap: 4px; font-size: 12px; line-height: 16px; color: var(--text-weaker); }
+  .labels button {
+    border: 0; background: none; padding: 0; cursor: pointer;
+    color: inherit; font: inherit; flex: 1 1 0; min-width: 0; text-align: center;
+  }
+  .labels button:first-child { flex: 0 0 36px; text-align: left; }
+  .labels button:last-child { flex: 0 0 37px; text-align: right; }
+  .labels button.is-active { color: var(--text-strong); }
+  .labels button:hover { color: var(--text-strong); }
+
+  /* ---------- Estimated usage ---------- */
+  .usage {
+    border: 1.5px solid var(--stroke-focus);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .usage h4 { margin: 0; font-weight: 600; font-size: 14px; line-height: 20px; color: var(--text-info); }
+  .usage ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .usage li { display: flex; gap: 4px; font-weight: 600; font-size: 14px; line-height: 20px; }
+  .usage li b { font-weight: 600; flex: 0 0 80px; font-variant-numeric: tabular-nums; }
+  .usage li span { flex: 1; min-width: 0; }
+  .ast { color: var(--error); font-weight: 400; }
+  .usage .note { font-size: 12px; line-height: 16px; color: var(--text-weak); }
+  .valid { font-size: 12px; line-height: 16px; text-align: center; }
+
+  .badge {
+    position: absolute;
+    top: 2px;
+    left: calc(50% + 111.83px);
+    transform: translateX(-50%);
+    background: rgba(222,0,0,0.8);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 32px;
+    padding: 4px 12px;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 28px;
+    white-space: nowrap;
+    z-index: 1;
+  }
+
+  /* ---------- Subscription ---------- */
+  [hidden] { display: none !important; }
+  .billing {
+    display: flex;
+    align-items: center;
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 4px;
+  }
+  .billing button {
+    min-width: 120px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 26px;
+    color: #212529;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color .2s, filter .2s;
+  }
+  .billing button.is-active { background: #fff; color: #15171f; filter: drop-shadow(2px 2px 2px rgba(124,124,124,0.25)); }
+  .billing .save {
+    background: #f23b77;
+    border: 1px solid rgba(255,255,255,0.6);
+    color: #fff;
+    border-radius: 32px;
+    padding: 2px 6px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .tier-badge {
+    display: inline-block;
+    padding: 0 10px;
+    border-radius: 16px;
+    color: #fff;
+    font-family: var(--font-body);
+    font-weight: 800;
+    font-size: 18px;
+    line-height: 26px;
+    letter-spacing: 0.3px;
+  }
+  .tier-badge.plus { background: #7dd3f0; }
+  .per-mo { font-size: 22px; line-height: 28px; font-weight: 400; color: var(--text-strong); }
+  .sub-features li { font-weight: 400; font-size: 16px; line-height: 24px; color: var(--text-strong); align-items: flex-start; }
+  .sub-features li img { margin-top: 2px; }
+  .sub-features .hl { font-weight: 400; }
+  .cards[data-panel="sub"] .card { flex: 1; }
+  .cards[data-panel="payg"] .card { flex: 1; }
+  .cards[data-panel="payg"] .card .valid { margin-top: auto; }
+  /* Two PAYG cards: centred, but still reachable when the row scrolls */
+  .cards[data-panel="payg"] > :first-child { margin-left: auto; }
+  .cards[data-panel="payg"] > :last-child { margin-right: auto; }
+  .usage.tools h4 { display: flex; align-items: center; justify-content: space-between; color: var(--text-strong); }
+  .usage.tools h4 img { width: 16px; height: 16px; transform: scaleY(-1); }
+  .usage.tools li { justify-content: space-between; font-weight: 400; }
+  .usage.tools li b { flex: none; font-weight: 600; text-align: right; }
+  .slider-block.compact .credit-amount { padding-bottom: 8px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1280px) {
+    .page { padding: 0 40px 64px; }
+    .hero { padding: 96px 0 0; }
+    /* Card content keeps at least 320px (+32px padding each side); when three no longer fit, the row scrolls sideways */
+    .cards {
+      gap: 24px;
+      justify-content: flex-start;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding: 0 40px;
+      /* room for card shadows / badge inside the scroll area, bleeding to the screen edge */
+      width: calc(100% + 80px);
+      margin: -20px -40px -40px;
+      padding: 20px 40px 40px;
+    }
+    .card-col, .card-col.paid { flex: 1 0 384px; min-width: 384px; max-width: none; scroll-snap-align: start; }
+    .cards[data-panel="payg"] .card-col { max-width: 460px; }
+  }
+  /* Stacked layout */
+  @media (max-width: 768px) {
+    .cards { width: 100%; overflow: visible; margin: 0; padding: 0; scroll-snap-type: none; justify-content: center; }
+    .card-col, .card-col.paid { min-width: 0; scroll-snap-align: none; }
+    .cards { flex-direction: column-reverse; align-items: center; gap: 32px; } /* most expensive first */
+    .card-col, .card-col.paid { width: 100%; max-width: 460px; flex: none; }
+    .toolbar { max-width: 460px; }
+  }
+  @media (max-width: 600px) {
+    .page { padding: 0 16px 48px; }
+    .hero { padding-top: 48px; gap: 24px; }
+    .hero h1 { font-size: 28px; line-height: 34px; }
+    .tabs { padding: 6px; }
+    .tab { font-size: 18px; line-height: 24px; padding: 12px 8px; }
+    .subtitle { display: block; font-size: 14px; line-height: 20px; }
+    .subtitle img { display: inline-block; vertical-align: -3px; margin-left: 2px; width: 15px; height: 15px; }
+    .api-link.ghost { display: none; }
+    .per-mo { font-size: 18px; }
+    .api-link { font-size: 16px; }
+    .card { padding: 24px 20px; border-radius: 24px; }
+    .price { font-size: 48px; line-height: 56px; }
+    .og-price { font-size: 20px; }
+    .badge { left: auto; right: 20px; transform: none; }
+    .usage { padding: 16px; }
+    .usage li b { flex-basis: 64px; }
+  }
+  @media (max-width: 360px) {
+    .per-credit .val { font-size: 17px; }
+    .labels { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="hero">
+    <h1 id="page-title">Choose the Right Plan for you</h1>
+    <div class="tab-wrap">
+      <div class="tabs" role="tablist">
+        <button class="tab is-active" role="tab" aria-selected="true" data-tab="sub" data-title="Choose the Right Plan for you" data-currency="US Dollar">Subscription</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="payg" data-title="Choose Your Perfect Pack" data-currency="TWD">Pay As You Go</button>
+      </div>
+      <div class="billing" role="radiogroup" aria-label="Billing period" data-panel="sub">
+        <button type="button" role="radio" aria-checked="false" data-billing="monthly">Monthly</button>
+        <button type="button" role="radio" aria-checked="true" data-billing="yearly" class="is-active">Yearly <span class="save">Save <span data-save>60</span>%</span></button>
+      </div>
+      <p class="subtitle" data-panel="payg" hidden>Pay-as-you-go credit pack could only be used in limited Generative-AI tools. <img src="assets/icon-info.svg" alt="" width="17" height="17"></p>
+    </div>
+  </section>
+
+  <section class="plans">
+    <div class="toolbar">
+      <a class="api-link ghost" aria-hidden="true" tabindex="-1">See API Pricing <img src="assets/arrow-right.svg" alt=""></a>
+      <button class="currency" type="button"><span data-currency>US Dollar</span><i class="sep"></i><img class="chev" src="assets/chevron.svg" alt=""></button>
+      <a class="api-link" href="#">See API Pricing <img src="assets/arrow-right.svg" alt=""></a>
+    </div>
+
+    <!-- ===== Subscription ===== -->
+    <div class="cards" data-panel="sub">
+      <!-- Free -->
+      <div class="card-col free">
+        <div class="card">
+          <div class="card-body">
+            <div class="plan-title">
+              <p class="plan-name">Free Plan</p>
+              <div class="price-row"><p class="price">$0</p></div>
+            </div>
+            <button class="btn btn-outline" type="button">Start for Free</button>
+            <ul class="features sub-features">
+              <li><img src="assets/circletick.svg" alt=""><span>Include Starter <b class="hl">FREE</b> Credits</span></li>
+              <li><img src="assets/circletick.svg" alt=""><span>Download Images with Watermarks</span></li>
+              <li><img src="assets/circletick.svg" alt=""><span>No Credit Card Needed</span></li>
+              <li><img src="assets/circletick.svg" alt=""><span>512 MB Cloud Storage</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plus -->
+      <div class="card-col paid">
+        <div class="card">
+          <div class="card-body">
+            <div class="plan-title">
+              <span class="tier-badge plus">PLUS</span>
+              <div class="price-row"><p class="price" data-bind="plus-price">$2.99</p><span class="per-mo">/mo</span></div>
+            </div>
+            <button class="btn btn-primary" type="button">Get Plus</button>
+            <ul class="features sub-features">
+              <li><img src="assets/circletick.svg" alt=""><span><b class="hl">100 Credits</b> / per month</span></li>
+              <li><img src="assets/circletick.svg" alt=""><span>Watermark-free, High-quality Downloads</span></li>
+              <li><img src="assets/circletick.svg" alt=""><span>Batch Photo Editing</span></li>
+              <li><img src="assets/circletick.svg" alt=""><span>10 GB Cloud Storage</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pro -->
+      <div class="card-col paid" data-sub="pro">
+        <div class="card pro">
+          <div class="plan-title">
+            <p class="plan-name">Pro Exclusive Pack</p>
+            <div class="price-row">
+              <p class="price" data-bind="pro-price">$4.19</p><span class="per-mo">/mo</span>
+              <span class="strike" data-bind="pro-og-wrap"><span class="og-price" data-bind="pro-og">$5.99</span><img src="assets/cross-line.svg" alt=""></span>
+            </div>
+          </div>
+          <button class="btn btn-pro" type="button">Get Pro Pack</button>
+          <div class="slider-block"></div>
+          <ul class="features sub-features">
+            <li><img src="assets/circletick.svg" alt=""><span><b class="hl"><span data-bind="pro-credits">300</span> Credits</b> / per month</span></li>
+            <li><img src="assets/circletick.svg" alt=""><span>Watermark-free, High-quality Downloads</span></li>
+            <li><img src="assets/circletick.svg" alt=""><span>Batch Photo Editing</span></li>
+            <li><img src="assets/circletick.svg" alt=""><span>100 GB Cloud Storage</span></li>
+            <li><img src="assets/circletick.svg" alt=""><span><b class="hl">Daily FREE</b> AI Agent Chats for Quick Edits</span></li>
+            <li><img src="assets/circletick.svg" alt=""><span><b class="hl">40% OFF</b> Additional Credit Purchases</span></li>
+            <li><img src="assets/circletick.svg" alt=""><span>Commercial Use Rights Included</span></li>
+          </ul>
+        </div>
+        <span class="badge" data-bind="pro-badge">30% off</span>
+      </div>
+    </div>
+
+    <!-- ===== Pay As You Go ===== -->
+    <div class="cards" data-panel="payg" hidden>
+      <!-- Standard -->
+      <div class="card-col paid" data-plan="standard">
+        <div class="card">
+          <div class="card-body">
+            <div class="plan-title">
+              <p class="plan-name">Standard Pack</p>
+              <div class="price-row"><p class="price" data-bind="price">NT$2,300</p></div>
+            </div>
+            <button class="btn btn-primary" type="button">Buy now</button>
+            <div class="usage tools">
+              <h4>Included Tools by Plan <img src="assets/icon-info.svg" alt="" width="16" height="16"></h4>
+              <ul>
+                <li><span>Subscribers</span><b>37+ tools</b></li>
+                <li><span>Free &amp; Pay-as-You-Go</span><b>18 AI tools</b></li>
+              </ul>
+            </div>
+            <div class="slider-block"></div>
+          </div>
+          <p class="valid">These credits can be used at any time within one year</p>
+        </div>
+      </div>
+
+      <!-- Pro -->
+      <div class="card-col paid" data-plan="pro">
+        <div class="card pro">
+          <div class="plan-title">
+            <p class="plan-name">Pro Exclusive Pack</p>
+            <div class="price-row">
+              <p class="price" data-bind="price">NT$1,380</p>
+              <span class="strike"><span class="og-price" data-bind="og">NT$2,300</span><img src="assets/cross-line.svg" alt=""></span>
+            </div>
+          </div>
+          <button class="btn btn-pro" type="button">Subscribe now</button>
+          <div class="slider-block"></div>
+          <p class="valid">These credits can be used at any time within one year</p>
+        </div>
+        <span class="badge" data-bind="badge">40% OFF</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<template id="slider-tpl">
+  <div class="slider-top">
+    <div class="credit-amount">
+      <img src="assets/coin.svg" alt="">
+      <div class="row">
+        <div class="credit"><span class="num" data-bind="credits">500</span><span class="unit">credits</span></div>
+        <div class="per-credit"></div>
+      </div>
+    </div>
+    <div class="track" role="slider" tabindex="0" aria-label="Credit amount" aria-valuemin="100" aria-valuemax="10000">
+      <div class="bar"></div>
+      <div class="progress"></div>
+      <img class="handle" src="assets/handle.svg" alt="" width="26" height="26" draggable="false">
+    </div>
+    <div class="ticks"></div>
+  </div>
+  <div class="labels"></div>
+</template>
+
+<script>
+  const fmtMoney = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmtNum = n => n.toLocaleString('en-US');
+
+  // Builds a 6-stop snapping credit slider inside `block`; calls onChange(index) on every change.
+  // `setup(block)` runs after the markup exists and before the first onChange.
+  function createSlider(block, stops, initial, onChange, setup) {
+    block.append(document.getElementById('slider-tpl').content.cloneNode(true));
+    if (setup) setup(block);
+    const track = block.querySelector('.track');
+    const labels = block.querySelector('.labels');
+    const creditsEl = block.querySelector('[data-bind="credits"]');
+    track.setAttribute('aria-valuemin', stops[0]);
+    track.setAttribute('aria-valuemax', stops[stops.length - 1]);
+    block.querySelector('.ticks').innerHTML = '<i></i>'.repeat(stops.length);
+    stops.forEach((c, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.tabIndex = -1;
+      b.textContent = fmtNum(c);
+      b.addEventListener('click', () => set(i));
+      labels.append(b);
+    });
+
+    let index = initial;
+    // Handle center sits on the tick centers: 8px from each edge, equal gaps.
+    const posFor = i => `calc(8px + (100% - 16px) * ${i / (stops.length - 1)})`;
+
+    function set(i) {
+      index = Math.max(0, Math.min(stops.length - 1, i));
+      track.style.setProperty('--pos', posFor(index));
+      track.setAttribute('aria-valuenow', stops[index]);
+      track.setAttribute('aria-valuetext', `${fmtNum(stops[index])} credits`);
+      [...labels.children].forEach((b, j) => b.classList.toggle('is-active', j === index));
+      creditsEl.textContent = fmtNum(stops[index]);
+      onChange(index);
+    }
+
+    function indexFromPointer(e) {
+      const r = track.getBoundingClientRect();
+      const ratio = (e.clientX - r.left - 8) / (r.width - 16);
+      return Math.round(Math.max(0, Math.min(1, ratio)) * (stops.length - 1));
+    }
+    track.addEventListener('pointerdown', e => {
+      track.setPointerCapture(e.pointerId);
+      track.classList.add('dragging');
+      set(indexFromPointer(e));
+    });
+    track.addEventListener('pointermove', e => {
+      if (track.hasPointerCapture(e.pointerId)) {
+        const i = indexFromPointer(e);
+        if (i !== index) set(i);
+      }
+    });
+    const end = () => track.classList.remove('dragging');
+    track.addEventListener('pointerup', end);
+    track.addEventListener('pointercancel', end);
+    track.addEventListener('keydown', e => {
+      const map = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 };
+      if (e.key in map) { set(index + map[e.key]); e.preventDefault(); }
+      else if (e.key === 'Home') { set(0); e.preventDefault(); }
+      else if (e.key === 'End') { set(stops.length - 1); e.preventDefault(); }
+    });
+
+    set(initial);
+    return { get index() { return index; } };
+  }
+
+  /* ===== Subscription (placeholder prices) ===== */
+  const SUB = {
+    // Pro credits per month; default is 300 (PM spec).
+    proStops: [300, 800, 1500, 2500, 5000, 10000],
+    proMonthly: [14.99, 29.99, 49.99, 79.99, 149.99, 279.99],
+    proYearly:  [71.88, 143.88, 239.88, 383.88, 719.88, 1343.88], // billed once a year
+    plusMonthly: 7.49,
+    plusYearly: 35.88,
+    holidayDiscount: 0.3, // set to 0 when there is no Holiday Discount
+  };
+  let billing = 'yearly';
+  const subPro = document.querySelector('[data-sub="pro"]');
+  const $sub = key => document.querySelector(`[data-bind="${key}"]`);
+
+  function renderSub() {
+    const i = proSlider ? proSlider.index : 0;
+    const yearly = billing === 'yearly';
+    // Yearly plans are shown as $/mo (Yearly Price / 12).
+    const proList = yearly ? SUB.proYearly[i] / 12 : SUB.proMonthly[i];
+    const proNow = proList * (1 - SUB.holidayDiscount);
+    $sub('plus-price').textContent = fmtMoney(yearly ? SUB.plusYearly / 12 : SUB.plusMonthly);
+    $sub('pro-price').textContent = fmtMoney(Math.floor(proNow * 100) / 100);
+    $sub('pro-og').textContent = fmtMoney(proList);
+    $sub('pro-og-wrap').hidden = !SUB.holidayDiscount;
+    $sub('pro-badge').hidden = !SUB.holidayDiscount;
+    $sub('pro-badge').textContent = `${Math.round(SUB.holidayDiscount * 100)}% off`;
+    $sub('pro-credits').textContent = fmtNum(SUB.proStops[i]);
+  }
+
+  // Save % = 1 - (Pro yearly price / (Pro monthly price * 12)), using the default Pro tier.
+  document.querySelector('[data-save]').textContent =
+    Math.round((1 - SUB.proYearly[0] / (SUB.proMonthly[0] * 12)) * 100);
+
+  let proSlider = null;
+  proSlider = createSlider(subPro.querySelector('.slider-block'), SUB.proStops, 0, renderSub);
+
+  document.querySelectorAll('[data-billing]').forEach(btn => btn.addEventListener('click', () => {
+    billing = btn.dataset.billing;
+    document.querySelectorAll('[data-billing]').forEach(b => {
+      b.classList.toggle('is-active', b === btn);
+      b.setAttribute('aria-checked', b === btn);
+    });
+    renderSub();
+  }));
+
+  /* ===== Pay As You Go (TWD; values from the PAYG content screenshot) ===== */
+  const PAYG_STOPS = [100, 200, 500, 1000, 2000];
+  const PAYG = {
+    standard: { perCredit: [5.69, 5.20, 4.60, 3.97, 3.39] },
+    pro:      { perCredit: [3.41, 3.12, 2.76, 2.38, 2.03] }, // crossed-out price = Standard's
+  };
+  const fmtNT = n => 'NT$' + n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  const fmtNTPer = n => 'NT$' + n.toFixed(2);
+
+  document.querySelectorAll('[data-plan]').forEach(col => {
+    const isPro = col.dataset.plan === 'pro';
+    const per = PAYG[col.dataset.plan].perCredit;
+    const listPer = PAYG.standard.perCredit;
+    const $ = key => col.querySelector(`[data-bind="${key}"]`);
+
+    createSlider(col.querySelector('.slider-block'), PAYG_STOPS, 2, index => {
+      const credits = PAYG_STOPS[index];
+      $('price').textContent = fmtNT(Math.round(credits * per[index]));
+      $('per').textContent = fmtNTPer(per[index]);
+      if (isPro) {
+        $('og').textContent = fmtNT(Math.round(credits * listPer[index]));
+        $('ogPer').textContent = fmtNTPer(listPer[index]);
+        $('badge').textContent = `${Math.round((1 - per[index] / listPer[index]) * 100)}% OFF`;
+      }
+    }, b => {
+      // Per-credit price row only exists on Pay As You Go cards.
+      b.querySelector('.per-credit').innerHTML = isPro
+        ? '<span><span class="val now" data-bind="per"></span><span class="suffix now">/credit</span></span>' +
+          '<span class="strike"><span class="og-per" data-bind="ogPer"></span><img src="assets/cross-line-sm.svg" alt=""></span>'
+        : '<span><span class="val" data-bind="per"></span><span class="suffix">/credit</span></span>';
+    });
+  });
+
+  /* ===== Tabs ===== */
+  document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('is-active', t === tab);
+      t.setAttribute('aria-selected', t === tab);
+    });
+    document.querySelectorAll('[data-panel]').forEach(p => { p.hidden = p.dataset.panel !== tab.dataset.tab; });
+    document.getElementById('page-title').textContent = tab.dataset.title;
+    document.querySelector('[data-currency]:not(.tab)').textContent = tab.dataset.currency;
+  }));
+</script>
+</body>
+</html>
