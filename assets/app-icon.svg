@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+  <!-- Placeholder approximation of the YouCam app icon; replace with the official asset -->
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse"><stop stop-color="#1e2f7a"/><stop offset="1" stop-color="#1a1650"/></linearGradient></defs>
+  <rect width="42" height="42" rx="9" fill="url(#bg)"/>
+  <path d="M13 13l8 9 8-9M21 22v8" stroke="#fff" stroke-opacity=".25" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="13" cy="13" r="4" fill="#3ee0c8"/>
+  <circle cx="29" cy="12" r="4" fill="#4fc3f7"/>
+  <circle cx="21" cy="22" r="4" fill="#2a8cff"/>
+  <circle cx="21" cy="31" r="3.5" fill="#ff4f9a"/>
+</svg>

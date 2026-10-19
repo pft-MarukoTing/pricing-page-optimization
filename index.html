@@ -17,6 +17,7 @@
     --pro: #00789e;
     --fill-disabled: rgba(17, 24, 26, 0.2);
     --stroke-strong: rgba(17, 24, 26, 0.45);
+    --stroke-weak: rgba(17, 24, 26, 0.2); /* assumed: Stroke/Weak isn't in the Figma nodes read so far */
     --stroke-focus: rgba(3, 173, 226, 0.2);
     --error: #de0000;
     --font-display: "Wix Madefor Display", system-ui, sans-serif;
@@ -44,7 +45,7 @@
   }
   .hero {
     width: 100%;
-    padding: 130px 110px 0;
+    padding: 64px 110px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -145,6 +146,37 @@
     color: #000;
     cursor: pointer;
   }
+  .currency-wrap { position: relative; }
+  .currency-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    max-height: 196px; /* ~6 items, rest scrolls */
+    overflow-y: auto;
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #dcdde3;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  }
+  .currency-menu::-webkit-scrollbar { width: 6px; }
+  .currency-menu::-webkit-scrollbar-track { background: transparent; }
+  .currency-menu::-webkit-scrollbar-thumb { background: var(--stroke-weak); border-radius: 3px; }
+  @supports not selector(::-webkit-scrollbar) {
+    .currency-menu { scrollbar-width: thin; scrollbar-color: var(--stroke-weak) transparent; }
+  }
+  .currency-menu li {
+    padding: 6px 16px;
+    font-size: 13px;
+    line-height: 20px;
+    color: #212529;
+    cursor: pointer;
+  }
+  .currency-menu li:hover, .currency-menu li[aria-selected="true"] { background: #e6f6fc; }
   .currency span { width: 55px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
   .currency .sep { width: 1px; height: 16px; background: #cacce0; }
   .currency img.chev { width: 7px; height: 16px; }
@@ -405,12 +437,31 @@
     letter-spacing: 0.3px;
   }
   .tier-badge.plus { background: #7dd3f0; }
-  .per-mo { font-size: 22px; line-height: 28px; font-weight: 400; color: var(--text-strong); }
+  .per-mo { font-size: 22px; line-height: 28px; font-weight: 600; color: #191919; }
+  .card.pro .per-mo { color: var(--pro); }
+  .price .cur { font-size: 24px; letter-spacing: 0; }
+  .per-credit .val .cur { font-size: 14px; }
   .sub-features li { font-weight: 400; font-size: 16px; line-height: 24px; color: var(--text-strong); align-items: flex-start; }
   .sub-features li img { margin-top: 2px; }
   .sub-features .hl { font-weight: 400; }
   .cards[data-panel="sub"] .card { flex: 1; }
   .cards[data-panel="payg"] .card { flex: 1; }
+  /* AI Agent rows pinned to the bottom of each subscription card */
+  .agent-links {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--stroke-weak);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+  }
+  .agent-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .agent-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; line-height: 20px; color: #15171f; white-space: nowrap; }
+  .agent-name .spark { flex: none; color: var(--brand); }
+  .agent-name .info { width: 12px; height: 12px; transform: scaleY(-1); margin-left: -2px; }
+  .agent-link { display: inline-flex; align-items: center; gap: 4px; color: var(--brand); font-weight: 400; font-size: 14px; line-height: 20px; text-decoration: none; white-space: nowrap; }
+  .agent-link:hover { text-decoration: underline; }
   .cards[data-panel="payg"] .card .valid { margin-top: auto; }
   /* Two PAYG cards: centred, but still reachable when the row scrolls */
   .cards[data-panel="payg"] > :first-child { margin-left: auto; }
@@ -421,10 +472,115 @@
   .usage.tools li b { flex: none; font-weight: 600; text-align: right; }
   .slider-block.compact .credit-amount { padding-bottom: 8px; }
 
+  /* ---------- Header ---------- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    height: 66px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 0 16px 0 30px;
+    background: #fff;
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s;
+  }
+  .site-header.is-scrolled { border-bottom-color: var(--stroke-weak); }
+  .brand { display: flex; align-items: center; gap: 10px; flex: none; text-decoration: none; }
+  .brand .app-icon { width: 42px; height: 42px; border-radius: 9px; }
+  .brand .wm-youcam { width: 115px; height: 24px; }
+  .brand .wm-editor { width: 131px; height: 18px; align-self: center; margin-top: 6px; margin-left: -2px; }
+  .site-nav { flex: 1; display: flex; align-items: center; min-width: 0; }
+  .site-nav a {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 20px;
+    border-radius: 32px;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 26px;
+    color: var(--text-strong);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .site-nav a img { width: 20px; height: 20px; }
+  .site-nav a svg { color: var(--text-weak); }
+  .site-nav a:hover { background: rgba(17,24,26,0.05); }
+  .site-nav a.is-current { color: var(--brand); }
+  .header-right { display: flex; align-items: center; gap: 12px; flex: none; }
+  .start-btn {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 20px 0 16px;
+    border-radius: 32px;
+    background: var(--brand);
+    color: #fff;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 26px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: filter .15s;
+  }
+  .start-btn:hover { filter: brightness(1.05); }
+  .avatar {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 0;
+    background: #15171f;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+  .avatar .dot { position: absolute; top: -2px; right: -4px; width: 8px; height: 8px; border-radius: 50%; background: #f23b77; }
+  .nav-toggle { display: none; border: 0; background: none; padding: 8px; margin-left: -8px; color: var(--text-strong); cursor: pointer; }
+
+  @media (max-width: 1080px) {
+    .site-header { gap: 16px; padding: 0 16px; }
+    .site-nav a { padding: 0 12px; font-size: 16px; }
+    .start-btn { font-size: 16px; }
+  }
+  @media (max-width: 900px) {
+    .nav-toggle { display: inline-flex; }
+    .site-nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      padding: 8px 16px 16px;
+      background: #fff;
+      border-bottom: 1px solid var(--stroke-weak);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+    }
+    .site-header.nav-open .site-nav { display: flex; }
+    .site-nav a { justify-content: space-between; padding: 0 12px; }
+    .header-right { margin-left: auto; }
+  }
+  @media (max-width: 600px) {
+    .site-header { height: 60px; gap: 8px; }
+    .brand .app-icon { width: 34px; height: 34px; border-radius: 8px; }
+    .brand .wm-youcam { width: 86px; height: 18px; }
+    .brand .wm-editor { display: none; }
+    .start-btn { width: 38px; height: 38px; padding: 0; justify-content: center; }
+    .start-btn span { display: none; }
+    .avatar { width: 38px; height: 38px; }
+  }
+
   /* ---------- Responsive ---------- */
   @media (max-width: 1280px) {
     .page { padding: 0 40px 64px; }
-    .hero { padding: 96px 0 0; }
+    .hero { padding: 56px 0 0; }
     /* Card content keeps at least 320px (+32px padding each side); when three no longer fit, the row scrolls sideways */
     .cards {
       gap: 24px;
@@ -450,7 +606,7 @@
   }
   @media (max-width: 600px) {
     .page { padding: 0 16px 48px; }
-    .hero { padding-top: 48px; gap: 24px; }
+    .hero { padding-top: 32px; gap: 24px; }
     .hero h1 { font-size: 28px; line-height: 34px; }
     .tabs { padding: 6px; }
     .tab { font-size: 18px; line-height: 24px; padding: 12px 8px; }
@@ -473,12 +629,38 @@
 </style>
 </head>
 <body>
+<header class="site-header">
+  <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="#" aria-label="YouCam Online Editor">
+    <img class="app-icon" src="assets/app-icon.svg" alt="" width="42" height="42">
+    <img class="wm-youcam" src="assets/logo-youcam.svg" alt="" width="115" height="24">
+    <img class="wm-editor" src="assets/logo-online-editor.svg" alt="" width="131" height="18">
+  </a>
+  <nav class="site-nav" aria-label="Main">
+    <a href="#">Product <img src="assets/nav-chevron.svg" alt="" width="20" height="20"></a>
+    <a href="#">Use Case <img src="assets/nav-chevron.svg" alt="" width="20" height="20"></a>
+    <a href="#" class="is-current" aria-current="page">Pricing</a>
+    <a href="#" target="_blank" rel="noopener">API <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M9 3h4v4M13 3L7.5 8.5M11 9.5V13H3V5h3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </nav>
+  <div class="header-right">
+    <a class="start-btn" href="#">
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4 16L12.5 7.5M11 6l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 2l.6 1.4L17 4l-1.4.6L15 6l-.6-1.4L13 4l1.4-.6zM6 3l.4.9.9.4-.9.4L6 5.6l-.4-.9-.9-.4.9-.4zM16.5 11l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4z" fill="currentColor"/></svg>
+      <span>Start Editing</span>
+    </a>
+    <button class="avatar" type="button" aria-label="Account">
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="8.5" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <i class="dot"></i>
+    </button>
+  </div>
+</header>
 <main class="page">
   <section class="hero">
     <h1 id="page-title">Choose the Right Plan for you</h1>
     <div class="tab-wrap">
       <div class="tabs" role="tablist">
-        <button class="tab is-active" role="tab" aria-selected="true" data-tab="sub" data-title="Choose the Right Plan for you" data-currency="US Dollar">Subscription</button>
+        <button class="tab is-active" role="tab" aria-selected="true" data-tab="sub" data-title="Choose the Right Plan for you" data-currency="USD">Subscription</button>
         <button class="tab" role="tab" aria-selected="false" data-tab="payg" data-title="Choose Your Perfect Pack" data-currency="TWD">Pay As You Go</button>
       </div>
       <div class="billing" role="radiogroup" aria-label="Billing period" data-panel="sub">
@@ -492,7 +674,10 @@
   <section class="plans">
     <div class="toolbar">
       <a class="api-link ghost" aria-hidden="true" tabindex="-1">See API Pricing <img src="assets/arrow-right.svg" alt=""></a>
-      <button class="currency" type="button"><span data-currency>US Dollar</span><i class="sep"></i><img class="chev" src="assets/chevron.svg" alt=""></button>
+      <div class="currency-wrap">
+        <button class="currency" type="button" aria-haspopup="listbox" aria-expanded="false"><span data-currency>USD</span><i class="sep"></i><img class="chev" src="assets/chevron.svg" alt=""></button>
+        <ul class="currency-menu" role="listbox" aria-label="Currency" tabindex="-1" hidden></ul>
+      </div>
       <a class="api-link" href="#">See API Pricing <img src="assets/arrow-right.svg" alt=""></a>
     </div>
 
@@ -504,7 +689,7 @@
           <div class="card-body">
             <div class="plan-title">
               <p class="plan-name">Free Plan</p>
-              <div class="price-row"><p class="price">$0</p></div>
+              <div class="price-row"><p class="price" data-bind="free-price">$0</p></div>
             </div>
             <button class="btn btn-outline" type="button">Start for Free</button>
             <ul class="features sub-features">
@@ -513,6 +698,16 @@
               <li><img src="assets/circletick.svg" alt=""><span>No Credit Card Needed</span></li>
               <li><img src="assets/circletick.svg" alt=""><span>512 MB Cloud Storage</span></li>
             </ul>
+          </div>
+          <div class="agent-links">
+            <div class="agent-row">
+              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>YouCam AI Agent</span>
+              <a class="agent-link" href="#">Usage details <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+            <div class="agent-row">
+              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <img class="info" src="assets/icon-info.svg" alt="" width="18" height="18"></span>
+              <a class="agent-link" href="#">Explore <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4.5 11.5l7-7m-5.5 0h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
           </div>
         </div>
       </div>
@@ -532,6 +727,16 @@
               <li><img src="assets/circletick.svg" alt=""><span>Batch Photo Editing</span></li>
               <li><img src="assets/circletick.svg" alt=""><span>10 GB Cloud Storage</span></li>
             </ul>
+          </div>
+          <div class="agent-links">
+            <div class="agent-row">
+              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>YouCam AI Agent</span>
+              <a class="agent-link" href="#">Usage details <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+            <div class="agent-row">
+              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <img class="info" src="assets/icon-info.svg" alt="" width="18" height="18"></span>
+              <a class="agent-link" href="#">Explore <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4.5 11.5l7-7m-5.5 0h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
           </div>
         </div>
       </div>
@@ -557,6 +762,16 @@
             <li><img src="assets/circletick.svg" alt=""><span><b class="hl">40% OFF</b> Additional Credit Purchases</span></li>
             <li><img src="assets/circletick.svg" alt=""><span>Commercial Use Rights Included</span></li>
           </ul>
+          <div class="agent-links">
+            <div class="agent-row">
+              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>YouCam AI Agent</span>
+              <a class="agent-link" href="#">Usage details <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+            <div class="agent-row">
+              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <img class="info" src="assets/icon-info.svg" alt="" width="18" height="18"></span>
+              <a class="agent-link" href="#">Explore <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4.5 11.5l7-7m-5.5 0h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+            </div>
+          </div>
         </div>
         <span class="badge" data-bind="pro-badge">30% off</span>
       </div>
@@ -626,7 +841,42 @@
 </template>
 
 <script>
-  const fmtMoney = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  /* ===== Currency formatting (placeholder rates per 1 USD — replace with real price tables) ===== */
+  const CUR = {
+    USD: { sym: '$',    rate: 1 },
+    GBP: { sym: '£',    rate: 0.79 },
+    CAD: { sym: 'C$',   rate: 1.37 },
+    AUD: { sym: 'A$',   rate: 1.52 },
+    TWD: { sym: 'NT$',  rate: 32,    dec: 0 },
+    HKD: { sym: 'HK$',  rate: 7.8 },
+    JPY: { sym: '¥',    rate: 150,   dec: 0 },
+    KRW: { sym: '₩',    rate: 1380,  dec: 0 },
+    EUR: { sym: '€',    rate: 0.92 },
+    CHF: { sym: 'CHF ', rate: 0.88 },
+    MXN: { sym: 'MX$',  rate: 18.5 },
+    CLP: { sym: 'CLP$', rate: 940,   dec: 0 },
+    BRL: { sym: 'R$',   rate: 5.4 },
+    TRY: { sym: '₺',    rate: 34 },
+    THB: { sym: '฿',    rate: 34 },
+    IDR: { sym: 'Rp ',  rate: 15800, dec: 0 },
+    RUB: { sym: '₽',    rate: 92 },
+    CNY: { sym: 'CN¥',  rate: 7.2 },
+    VND: { sym: '₫',    rate: 25000, dec: 0 },
+    PLN: { sym: 'zł',   rate: 4.0 },
+  };
+  let currency = 'USD';
+  const rerenders = [];
+
+  // Converts `amount` (priced in `from`) into the selected currency and formats it.
+  // Per-credit prices always keep 2 decimals; totals follow the currency (JPY, KRW… have none).
+  function money(amount, from, { perUnit = false } = {}) {
+    const c = CUR[currency];
+    const value = amount / CUR[from].rate * c.rate;
+    const dec = perUnit ? 2 : (c.dec ?? 2);
+    return c.sym + value.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  }
+  // Shrinks a letter prefix (NT, HK, A, Rp…) so the amount stays the focus.
+  const smallPrefix = str => str.replace(/^(\p{L}+)/u, '<span class="cur">$1</span>');
   const fmtNum = n => n.toLocaleString('en-US');
 
   // Builds a 6-stop snapping credit slider inside `block`; calls onChange(index) on every change.
@@ -690,7 +940,7 @@
     });
 
     set(initial);
-    return { get index() { return index; } };
+    return { get index() { return index; }, refresh: () => onChange(index) };
   }
 
   /* ===== Subscription (placeholder prices) ===== */
@@ -713,9 +963,10 @@
     // Yearly plans are shown as $/mo (Yearly Price / 12).
     const proList = yearly ? SUB.proYearly[i] / 12 : SUB.proMonthly[i];
     const proNow = proList * (1 - SUB.holidayDiscount);
-    $sub('plus-price').textContent = fmtMoney(yearly ? SUB.plusYearly / 12 : SUB.plusMonthly);
-    $sub('pro-price').textContent = fmtMoney(Math.floor(proNow * 100) / 100);
-    $sub('pro-og').textContent = fmtMoney(proList);
+    $sub('free-price').innerHTML = smallPrefix(money(0, 'USD').replace(/\.0+$/, ''));
+    $sub('plus-price').innerHTML = smallPrefix(money(yearly ? SUB.plusYearly / 12 : SUB.plusMonthly, 'USD'));
+    $sub('pro-price').innerHTML = smallPrefix(money(Math.floor(proNow * 100) / 100, 'USD'));
+    $sub('pro-og').textContent = money(proList, 'USD');
     $sub('pro-og-wrap').hidden = !SUB.holidayDiscount;
     $sub('pro-badge').hidden = !SUB.holidayDiscount;
     $sub('pro-badge').textContent = `${Math.round(SUB.holidayDiscount * 100)}% off`;
@@ -728,6 +979,7 @@
 
   let proSlider = null;
   proSlider = createSlider(subPro.querySelector('.slider-block'), SUB.proStops, 0, renderSub);
+  rerenders.push(renderSub);
 
   document.querySelectorAll('[data-billing]').forEach(btn => btn.addEventListener('click', () => {
     billing = btn.dataset.billing;
@@ -744,8 +996,6 @@
     standard: { perCredit: [5.69, 5.20, 4.60, 3.97, 3.39] },
     pro:      { perCredit: [3.41, 3.12, 2.76, 2.38, 2.03] }, // crossed-out price = Standard's
   };
-  const fmtNT = n => 'NT$' + n.toLocaleString('en-US', { maximumFractionDigits: 0 });
-  const fmtNTPer = n => 'NT$' + n.toFixed(2);
 
   document.querySelectorAll('[data-plan]').forEach(col => {
     const isPro = col.dataset.plan === 'pro';
@@ -753,13 +1003,13 @@
     const listPer = PAYG.standard.perCredit;
     const $ = key => col.querySelector(`[data-bind="${key}"]`);
 
-    createSlider(col.querySelector('.slider-block'), PAYG_STOPS, 2, index => {
+    const slider = createSlider(col.querySelector('.slider-block'), PAYG_STOPS, 2, index => {
       const credits = PAYG_STOPS[index];
-      $('price').textContent = fmtNT(Math.round(credits * per[index]));
-      $('per').textContent = fmtNTPer(per[index]);
+      $('price').innerHTML = smallPrefix(money(Math.round(credits * per[index]), 'TWD'));
+      $('per').innerHTML = smallPrefix(money(per[index], 'TWD', { perUnit: true }));
       if (isPro) {
-        $('og').textContent = fmtNT(Math.round(credits * listPer[index]));
-        $('ogPer').textContent = fmtNTPer(listPer[index]);
+        $('og').textContent = money(Math.round(credits * listPer[index]), 'TWD');
+        $('ogPer').textContent = money(listPer[index], 'TWD', { perUnit: true });
         $('badge').textContent = `${Math.round((1 - per[index] / listPer[index]) * 100)}% OFF`;
       }
     }, b => {
@@ -769,7 +1019,53 @@
           '<span class="strike"><span class="og-per" data-bind="ogPer"></span><img src="assets/cross-line-sm.svg" alt=""></span>'
         : '<span><span class="val" data-bind="per"></span><span class="suffix">/credit</span></span>';
     });
+    rerenders.push(slider.refresh);
   });
+
+  /* ===== Currency dropdown ===== */
+  const CURRENCIES = ['USD', 'GBP', 'CAD', 'AUD', 'TWD', 'HKD', 'JPY', 'KRW', 'EUR', 'CHF',
+                      'MXN', 'CLP', 'BRL', 'TRY', 'THB', 'IDR', 'RUB', 'CNY', 'VND', 'PLN'];
+  const curBtn = document.querySelector('.currency');
+  const curMenu = document.querySelector('.currency-menu');
+  const curLabel = document.querySelector('.currency [data-currency]');
+  curMenu.innerHTML = CURRENCIES.map(c => `<li role="option" data-value="${c}">${c}</li>`).join('');
+
+  let currencyPicked = false; // once the user picks one, it stays across tabs
+  function setCurrency(code) {
+    currency = code;
+    curLabel.textContent = code;
+    rerenders.forEach(fn => fn());
+    curMenu.querySelectorAll('li').forEach(li => li.setAttribute('aria-selected', li.dataset.value === code));
+  }
+  function openMenu(open) {
+    curMenu.hidden = !open;
+    curBtn.setAttribute('aria-expanded', open);
+    if (open) curMenu.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' });
+  }
+  curBtn.addEventListener('click', () => openMenu(curMenu.hidden));
+  curMenu.addEventListener('click', e => {
+    const li = e.target.closest('li');
+    if (!li) return;
+    currencyPicked = true;
+    setCurrency(li.dataset.value);
+    openMenu(false);
+    curBtn.focus();
+  });
+  document.addEventListener('click', e => { if (!e.target.closest('.currency-wrap')) openMenu(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !curMenu.hidden) { openMenu(false); curBtn.focus(); } });
+  setCurrency('USD');
+
+  /* ===== Header ===== */
+  const siteHeader = document.querySelector('.site-header');
+  const navToggle = document.querySelector('.nav-toggle');
+  navToggle.addEventListener('click', () => {
+    const open = siteHeader.classList.toggle('nav-open');
+    navToggle.setAttribute('aria-expanded', open);
+    navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  const onScroll = () => siteHeader.classList.toggle('is-scrolled', window.scrollY > 4);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
   /* ===== Tabs ===== */
   document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
@@ -779,7 +1075,7 @@
     });
     document.querySelectorAll('[data-panel]').forEach(p => { p.hidden = p.dataset.panel !== tab.dataset.tab; });
     document.getElementById('page-title').textContent = tab.dataset.title;
-    document.querySelector('[data-currency]:not(.tab)').textContent = tab.dataset.currency;
+    if (!currencyPicked) setCurrency(tab.dataset.currency);
   }));
 </script>
 </body>
