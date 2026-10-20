@@ -792,7 +792,8 @@
   .cmp-body > div { overflow: hidden; min-height: 0; }
   .cmp-group.is-collapsed .cmp-body { grid-template-rows: 0fr; }
   .cmp-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; min-height: 60px; }
-  .cmp-row > * { padding: 14px 20px; font-size: 16px; line-height: 24px; color: #15171f; text-align: center; }
+  .cmp-row .top { display: contents; } /* tool + cost share one line on mobile */
+  .cmp-row > :not(.top), .cmp-row .top > * { padding: 14px 20px; font-size: 16px; line-height: 24px; color: #15171f; text-align: center; }
   .cmp-row .tool { padding-left: 40px; font-weight: 600; text-align: left; }
   .cmp-cell { display: flex; align-items: center; justify-content: center; gap: 6px; }
   .cmp-cell img.mark { width: 20px; height: 20px; }
@@ -820,11 +821,13 @@
     .cmp-group { padding: 4px 0 16px; border-radius: 20px; }
     .cmp-group-title { padding: 0 16px; font-size: 18px; line-height: 26px; }
     .cmp-group-title img { width: 24px; height: 24px; }
-    .cmp-row { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "tool tool cost" "c1 c2 c3"; padding: 0 4px; }
-    .cmp-row > * { padding: 8px 4px 16px; font-size: 14px; line-height: 20px; }
-    .cmp-row .tool { grid-area: tool; padding: 8px 12px 6px; }
-    .cmp-row .cost { grid-area: cost; padding: 8px 12px 6px; text-align: right; justify-content: flex-end; }
-    .cmp-row .c1 { grid-area: c1; } .cmp-row .c2 { grid-area: c2; } .cmp-row .c3 { grid-area: c3; }
+    .cmp-row { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0 4px; }
+    .cmp-row > :not(.top), .cmp-row .top > * { padding: 8px 4px 16px; font-size: 14px; line-height: 20px; }
+    /* Cost takes whatever width the tool name leaves, instead of a fixed third */
+    .cmp-row .top { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px; }
+    .cmp-row .tool { flex: 0 0 auto; max-width: 60%; padding: 8px 0 6px; }
+    .cmp-row .cost { flex: 1 1 0; min-width: 0; padding: 8px 0 6px; text-align: right; justify-content: flex-end; }
+    .cmp-row.dup-sm { display: none; } /* "Free Credits" repeats the plan header subtitles */
   }
 
   /* ---------- Responsive ---------- */
@@ -957,7 +960,7 @@
         <button class="currency" type="button" aria-haspopup="listbox" aria-expanded="false"><span data-currency>USD</span><i class="sep"></i><img class="chev" src="assets/chevron.svg" alt=""></button>
         <ul class="currency-menu" role="listbox" aria-label="Currency" tabindex="-1" hidden></ul>
       </div>
-      <a class="api-link" href="#">See API Pricing <img src="assets/arrow-right.svg" alt=""></a>
+      <a class="api-link" href="https://yce.perfectcorp.com/ai-api/api-pricing">See API Pricing <img src="assets/arrow-right.svg" alt=""></a>
     </div>
 
     <!-- ===== Subscription ===== -->
@@ -981,11 +984,11 @@
           <div class="agent-links">
             <div class="agent-row">
               <span class="agent-name">YouCam AI Agent</span>
-              <a class="agent-link" href="#">Usage details <img src="assets/arrow-down.svg" alt="" width="16" height="16"></a>
+              <a class="agent-link" href="#cmp-ai-agent">Usage details <img src="assets/arrow-down.svg" alt="" width="16" height="16"></a>
             </div>
             <div class="agent-row">
               <span class="agent-name">AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/ic-info.svg" alt="" width="12" height="12"></button></span>
-              <a class="agent-link" href="#" target="_blank" rel="noopener">Explore <img src="assets/external-link.svg" alt="" width="16" height="16"></a>
+              <a class="agent-link" href="https://yce.perfectcorp.com/products/youcam-for-ai-assistants" target="_blank" rel="noopener">Explore <img src="assets/external-link.svg" alt="" width="16" height="16"></a>
               <div class="agent-tip" role="tooltip" hidden><b>Create directly in your AI assistant</b><p>Connect YouCam AI Agent to ChatGPT, Claude, and Gemini to create and edit visual content through conversation.</p></div>
             </div>
           </div>
@@ -1011,11 +1014,11 @@
           <div class="agent-links">
             <div class="agent-row">
               <span class="agent-name">YouCam AI Agent</span>
-              <a class="agent-link" href="#">Usage details <img src="assets/arrow-down.svg" alt="" width="16" height="16"></a>
+              <a class="agent-link" href="#cmp-ai-agent">Usage details <img src="assets/arrow-down.svg" alt="" width="16" height="16"></a>
             </div>
             <div class="agent-row">
               <span class="agent-name">AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/ic-info.svg" alt="" width="12" height="12"></button></span>
-              <a class="agent-link" href="#" target="_blank" rel="noopener">Explore <img src="assets/external-link.svg" alt="" width="16" height="16"></a>
+              <a class="agent-link" href="https://yce.perfectcorp.com/products/youcam-for-ai-assistants" target="_blank" rel="noopener">Explore <img src="assets/external-link.svg" alt="" width="16" height="16"></a>
               <div class="agent-tip" role="tooltip" hidden><b>Create directly in your AI assistant</b><p>Connect YouCam AI Agent to ChatGPT, Claude, and Gemini to create and edit visual content through conversation.</p></div>
             </div>
           </div>
@@ -1046,11 +1049,11 @@
           <div class="agent-links">
             <div class="agent-row">
               <span class="agent-name">YouCam AI Agent</span>
-              <a class="agent-link" href="#">Usage details <img src="assets/arrow-down.svg" alt="" width="16" height="16"></a>
+              <a class="agent-link" href="#cmp-ai-agent">Usage details <img src="assets/arrow-down.svg" alt="" width="16" height="16"></a>
             </div>
             <div class="agent-row">
               <span class="agent-name">AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/ic-info.svg" alt="" width="12" height="12"></button></span>
-              <a class="agent-link" href="#" target="_blank" rel="noopener">Explore <img src="assets/external-link.svg" alt="" width="16" height="16"></a>
+              <a class="agent-link" href="https://yce.perfectcorp.com/products/youcam-for-ai-assistants" target="_blank" rel="noopener">Explore <img src="assets/external-link.svg" alt="" width="16" height="16"></a>
               <div class="agent-tip" role="tooltip" hidden><b>Create directly in your AI assistant</b><p>Connect YouCam AI Agent to ChatGPT, Claude, and Gemini to create and edit visual content through conversation.</p></div>
             </div>
           </div>
@@ -1392,10 +1395,10 @@
       <label class="pack-row${i >= PAYG_VISIBLE ? ' extra' : ''}"${i >= PAYG_VISIBLE ? ' hidden' : ''}>
         <input type="radio" name="pack-${plan}" value="${i}"${i === selected ? ' checked' : ''}>
         <span class="radio" aria-hidden="true"></span>
-        <span class="pack-credits">${c} credit(s)</span>
+        <span class="pack-credits">${c} credits</span>
         <span class="pack-price">
           ${isPro ? '<span class="pack-og" data-og></span>' : ''}
-          <span class="pack-now"><b data-now></b><small>/credit(s)</small></span>
+          <span class="pack-now"><b data-now></b><small>/credit</small></span>
         </span>
       </label>`).join('');
     const rows = [...packs.querySelectorAll('.pack-row')];
@@ -1407,7 +1410,7 @@
       rows.forEach((row, i) => {
         row.classList.toggle('is-selected', i === selected);
         row.querySelector('[data-now]').innerHTML = smallPrefix(money(totals[i] / PAYG_PACKS[i], base, { perUnit: true }));
-        if (isPro) row.querySelector('[data-og]').textContent = money(list[i] / PAYG_PACKS[i], base, { perUnit: true }) + '/credit(s)';
+        if (isPro) row.querySelector('[data-og]').textContent = money(list[i] / PAYG_PACKS[i], base, { perUnit: true }) + '/credit';
       });
       $('price').innerHTML = smallPrefix(money(totals[selected], base));
       if (isPro) {
@@ -1507,68 +1510,68 @@
 
   /* ===== Compare All Plans data (content from the live pricing page, 2026-10-20) =====
      cells: [credit usage, Free, Plus, Pro]; "✓" = included, "–" = not included.
-     Notes: the live page shows "From null credit(s) / null sec(s)" for Text to Video and Video Generation
+     Notes: the live page shows "From null credits / null secs" for Text to Video and Video Generation
      (looks like a data bug) — shown as "- -" here. "AI Portrait Generator" is assumed from the Figma table:
-     the screenshots cut off the row(s) between AI Hair Color and AI Hairstyle Generator. */
+     the screenshots cut off the rows between AI Hair Color and AI Hairstyle Generator. */
   const COMPARE = [
     { title: null, rows: [
       ['Free Credits', '', 'Sign up for 5 credits', '100 credits / month', '300 credits / month'],
       ['Watermark free', '', '–', '✓', '✓'],
     ]},
     { title: 'AI Photo Editing', rows: [
-      ['Photo Enhancer', '- -', '2 use(s) / day', '5 use(s) / day', '✓'],
-      ['Photo Repair', '- -', '2 use(s) / day', '5 use(s) / day', '✓'],
-      ['AI Colorize', '- -', '3 use(s) / day', '✓', '✓'],
-      ['AI Color Correction', '- -', '3 use(s) / day', '✓', '✓'],
-      ['AI Lighting', '- -', '2 use(s) / day', '200 use(s) / day', '250 use(s) / day'],
-      ['AI Image Extender', '- -', '1 use(s) / day', '200 use(s) / day', '200 use(s) / day'],
-      ['AI Replace', '- -', '2 use(s) / day', '✓', '✓'],
-      ['Object Removal (Standard)', '- -', '3 use(s) / day', '✓', '✓'],
-      ['Object Removal (Advanced)', '- -', '1 use(s) / day', '1 use(s) / day', '150 use(s) / day'],
-      ['Remove Background, Blur Background, Change Background', '- -', '3 use(s) / day', '5 use(s) / day', '✓'],
+      ['Photo Enhancer', '- -', '2 uses / day', '5 uses / day', '✓'],
+      ['Photo Repair', '- -', '2 uses / day', '5 uses / day', '✓'],
+      ['AI Colorize', '- -', '3 uses / day', '✓', '✓'],
+      ['AI Color Correction', '- -', '3 uses / day', '✓', '✓'],
+      ['AI Lighting', '- -', '2 uses / day', '200 uses / day', '250 uses / day'],
+      ['AI Image Extender', '- -', '1 use / day', '200 uses / day', '200 uses / day'],
+      ['AI Replace', '- -', '2 uses / day', '✓', '✓'],
+      ['Object Removal (Standard)', '- -', '3 uses / day', '✓', '✓'],
+      ['Object Removal (Advanced)', '- -', '1 use / day', '1 use / day', '150 uses / day'],
+      ['Remove Background, Blur Background, Change Background', '- -', '3 uses / day', '5 uses / day', '✓'],
       ['Crop', '- -', '✓', '✓', '✓'],
       ['Flip & Rotate', '- -', '✓', '✓', '✓'],
       ['Resize', '- -', '✓', '✓', '✓'],
       ['Adjust Light & Color', '- -', '✓', '✓', '✓'],
       ['Effects', '- -', 'Limited', '✓', '✓'],
-      ['AI Image Generator', 'From 1 credit(s) / 1 Image(s)', '✓', '✓', '✓'],
-      ['Image Templates', 'From 1 credit(s) / 1 Image(s)', '✓', '✓', '✓'],
+      ['AI Image Generator', 'From 1 credit / 1 Image', '✓', '✓', '✓'],
+      ['Image Templates', 'From 1 credit / 1 Image', '✓', '✓', '✓'],
     ]},
     { title: 'AI Portrait', rows: [
       ['AI Makeup Virtual Try On', '- -', '–', '✓', '✓'],
       ['AI Face Reshape', '- -', '–', '✓', '✓'],
       ['AI Face Retouch', '- -', '–', '–', '✓'],
       ['AI Body Reshape', '- -', '–', 'Limited', '✓'],
-      ['AI Hair Color', '- -', '1 use(s) / day', '✓', '✓'],
-      ['AI Portrait Generator', '2 credit(s)', '✓', '✓', '✓'], // assumed, see note above
-      ['AI Hairstyle Generator', '2 credit(s)', '✓', '✓', '✓'],
-      ['AI Face Swap', '1 - 2 credit(s)', '✓', '✓', '✓'],
-      ['AI Clothes', '2 credit(s)', '✓', '✓', '✓'],
-      ['AI Beard Generator', '2 credit(s)', '✓', '✓', '✓'],
-      ['AI Makeup Transfer', '2 credit(s)', '✓', '✓', '✓'],
-      ['AI Headshot Generator', '20 image(s) = 30 credit(s)', '✓', '✓', '✓'],
-      ['AI Studio Generator', '10 image(s) = 10 credit(s)', '✓', '✓', '✓'],
-      ['AI Avatar Generator', '10 image(s) = 10 credit(s)', '✓', '✓', '✓'],
+      ['AI Hair Color', '- -', '1 use / day', '✓', '✓'],
+      ['AI Portrait Generator', '2 credits', '✓', '✓', '✓'], // assumed, see note above
+      ['AI Hairstyle Generator', '2 credits', '✓', '✓', '✓'],
+      ['AI Face Swap', '1 - 2 credits', '✓', '✓', '✓'],
+      ['AI Clothes', '2 credits', '✓', '✓', '✓'],
+      ['AI Beard Generator', '2 credits', '✓', '✓', '✓'],
+      ['AI Makeup Transfer', '2 credits', '✓', '✓', '✓'],
+      ['AI Headshot Generator', '20 images = 30 credits', '✓', '✓', '✓'],
+      ['AI Studio Generator', '10 images = 10 credits', '✓', '✓', '✓'],
+      ['AI Avatar Generator', '10 images = 10 credits', '✓', '✓', '✓'],
     ]},
     { title: 'AI Video Editing', rows: [
-      ['Video Enhancer', '1 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
-      ['Video Face Swap', '1 credit(s) / 2 - 3 sec(s)', '✓', '✓', '✓'],
-      ['Video Style Transfer', '4 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
-      ['Image to Video', 'From 2 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
-      ['Text to Video', '- -', '✓', '✓', '✓'], // live page: "From null credit(s) / null sec(s)"
-      ['Video Object Removal', 'From 2 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
-      ['AI Video Editor', 'From 4 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
-      ['Character Motion Swap', 'From 4 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
-      ['Video Templates', 'From 1 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
+      ['Video Enhancer', '1 credit / 1 sec', '✓', '✓', '✓'],
+      ['Video Face Swap', '1 credit / 2 - 3 secs', '✓', '✓', '✓'],
+      ['Video Style Transfer', '4 credits / 1 sec', '✓', '✓', '✓'],
+      ['Image to Video', 'From 2 credits / 1 sec', '✓', '✓', '✓'],
+      ['Text to Video', '- -', '✓', '✓', '✓'], // live page: "From null credits / null secs"
+      ['Video Object Removal', 'From 2 credits / 1 sec', '✓', '✓', '✓'],
+      ['AI Video Editor', 'From 4 credits / 1 sec', '✓', '✓', '✓'],
+      ['Character Motion Swap', 'From 4 credits / 1 sec', '✓', '✓', '✓'],
+      ['Video Templates', 'From 1 credit / 1 sec', '✓', '✓', '✓'],
     ]},
     { title: 'AI Agent', rows: [
-      ['General Chat', '5 credit(s)', '2 use(s) / lifetime', '2 use(s) / lifetime', '5 use(s) / day'],
-      ['Multi Image Upload', '8 - 10 credit(s)', '✓', '✓', '✓'],
-      ['Advanced Editing and Generation', '12 credit(s)', '✓', '✓', '✓'],
-      ['Video Generation', '- -', '✓', '✓', '✓'], // live page: "From null credit(s) / null sec(s)"
+      ['General Chat', '5 credits', '2 uses / lifetime', '2 uses / lifetime', '5 uses / day'],
+      ['Multi Image Upload', '8 - 10 credits', '✓', '✓', '✓'],
+      ['Advanced Editing and Generation', '12 credits', '✓', '✓', '✓'],
+      ['Video Generation', '- -', '✓', '✓', '✓'], // live page: "From null credits / null secs"
     ]},
     { title: 'Others', rows: [
-      ['Batch Photo Enhancer', '- -', '–', '1 use(s) / day', '✓'],
+      ['Batch Photo Enhancer', '- -', '–', '1 use / day', '✓'],
       ['Batch Image Converter', '- -', '–', '✓', '✓'],
       ['Commercial use allowed', '- -', '–', '–', '✓'],
     ]},
@@ -1580,15 +1583,16 @@
     else if (v === '–') inner = '<img class="mark" src="assets/table-minus.svg" alt="Not included" width="20" height="20">';
     else if (v.endsWith(' ⓘ')) inner = `${esc(v.slice(0, -2))}<img class="info" src="assets/ic-info.svg" alt="" width="14" height="14">`;
     else inner = esc(v);
+    if (cls === 'cost') inner = inner.replace(/(\d) (?=[A-Za-z])/g, '$1&nbsp;'); // keep "1 Image" on one line
     return `<div class="cmp-cell ${cls}">${inner}</div>`;
   }
   document.querySelector('.cmp-groups').innerHTML = COMPARE.map((g, gi) => `
-    <div class="cmp-group${g.title ? '' : ' no-title'}">
+    <div class="cmp-group${g.title ? '' : ' no-title'}"${g.title === 'AI Agent' ? ' id="cmp-ai-agent"' : ''}>
       ${g.title ? `<button class="cmp-group-title" type="button" aria-expanded="true" aria-controls="cmp-body-${gi}">${esc(g.title)}<img src="assets/chevron-section.svg" alt="" width="28" height="28"></button>` : ''}
       <div class="cmp-body" id="cmp-body-${gi}"><div>
         ${g.rows.map(([tool, cost, a, b, c]) => `
-        <div class="cmp-row">
-          <div class="tool">${esc(tool)}</div>${cmpCell(cost, 'cost')}${cmpCell(a, 'c1')}${cmpCell(b, 'c2')}${cmpCell(c, 'c3')}
+        <div class="cmp-row${tool === 'Free Credits' ? ' dup-sm' : ''}">
+          <div class="top"><div class="tool">${esc(tool)}</div>${cmpCell(cost, 'cost')}</div>${cmpCell(a, 'c1')}${cmpCell(b, 'c2')}${cmpCell(c, 'c3')}
         </div>`).join('')}
       </div></div>
     </div>`).join('');
@@ -1596,6 +1600,18 @@
     const open = btn.getAttribute('aria-expanded') !== 'true';
     btn.setAttribute('aria-expanded', open);
     btn.closest('.cmp-group').classList.toggle('is-collapsed', !open);
+  }));
+
+  /* "Usage details" → scroll to the AI Agent group, clearing the sticky site header + plan header */
+  document.querySelectorAll('.agent-link[href="#cmp-ai-agent"]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    const group = document.getElementById('cmp-ai-agent');
+    const title = group.querySelector('.cmp-group-title');
+    if (title.getAttribute('aria-expanded') !== 'true') title.click();
+    const cmpHead = document.querySelector('.cmp-head');
+    const offset = parseFloat(getComputedStyle(cmpHead).top) + cmpHead.offsetHeight + 16;
+    const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: group.getBoundingClientRect().top + window.scrollY - offset, behavior: smooth ? 'smooth' : 'auto' });
   }));
 
   /* ===== Tabs ===== */
