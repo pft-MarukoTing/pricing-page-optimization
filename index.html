@@ -1211,20 +1211,21 @@
   }));
 
   /* ===== Pay As You Go pack prices (per-pack totals; per-credit = total / credits) =====
-     USD: Standard 100 = $17.99 and both 500 packs ($72.99 / $43.79) are confirmed from the live page;
-          the other USD totals are estimates chosen to match the per-credit prices it shows.
-     TWD: from the PAYG content screenshot. 5000 / 10000 are placeholders in both currencies.
+     USD: per-credit prices for all 8 packs match the live page. Pack totals confirmed there:
+          Standard 100 = $17.99, Standard 500 = $72.99, Pro 500 = $43.79. The other USD totals are
+          estimates that reproduce the live per-credit prices (Pro = 40% off Standard).
+     TWD: 100–2000 from the PAYG content screenshot; 5000–20000 are placeholders.
      Other currencies are converted from USD. */
-  const PAYG_PACKS = [100, 200, 500, 1000, 2000, 5000, 10000];
+  const PAYG_PACKS = [100, 200, 500, 1000, 2000, 5000, 10000, 20000];
   const PAYG_VISIBLE = 5; // the rest appear under "Show more"
   const PAYG_TOTALS = {
     USD: {
-      standard: [17.99, 31.99, 72.99, 129.99, 214.99, 499.99, 899.99],
-      pro:      [10.79, 19.19, 43.79,  77.99, 128.99, 299.99, 539.99], // 40% off Standard
+      standard: [17.99, 31.99, 72.99, 129.99, 214.99, 449.99, 699.99, 999.99],
+      pro:      [10.79, 19.19, 43.79,  77.99, 128.99, 269.99, 419.99, 599.99],
     },
     TWD: {
-      standard: [569, 1040, 2300, 3970, 6780, 14750, 26000],
-      pro:      [341,  624, 1380, 2380, 4060,  8850, 15600],
+      standard: [569, 1040, 2300, 3970, 6780, 14750, 26000, 46000],
+      pro:      [341,  624, 1380, 2380, 4060,  8850, 15600, 27600],
     },
   };
 
