@@ -378,9 +378,9 @@
   .track .dots i {
     position: absolute;
     top: 50%;
-    width: 14px;
-    height: 14px;
-    margin: -7px 0 0 -7px;
+    width: 10px;
+    height: 10px;
+    margin: -5px 0 0 -5px;
     border-radius: 50%;
     background: #b8babb;
     transition: opacity .18s ease;
@@ -1210,20 +1210,27 @@
     renderSub();
   }));
 
-  /* ===== Pay As You Go (TWD; 100–2000 from the PAYG content screenshot) ===== */
+  /* ===== Pay As You Go pack prices (per-pack totals; per-credit = total / credits) =====
+     USD: Standard 100 = $17.99 and both 500 packs ($72.99 / $43.79) are confirmed from the live page;
+          the other USD totals are estimates chosen to match the per-credit prices it shows.
+     TWD: from the PAYG content screenshot. 5000 / 10000 are placeholders in both currencies.
+     Other currencies are converted from USD. */
   const PAYG_PACKS = [100, 200, 500, 1000, 2000, 5000, 10000];
   const PAYG_VISIBLE = 5; // the rest appear under "Show more"
-  const PAYG = {
-    // 5000 / 10000 are placeholders until real prices arrive
-    standard: { perCredit: [5.69, 5.20, 4.60, 3.97, 3.39, 2.95, 2.60] },
-    pro:      { perCredit: [3.41, 3.12, 2.76, 2.38, 2.03, 1.77, 1.56] }, // crossed-out price = Standard's
+  const PAYG_TOTALS = {
+    USD: {
+      standard: [17.99, 31.99, 72.99, 129.99, 214.99, 499.99, 899.99],
+      pro:      [10.79, 19.19, 43.79,  77.99, 128.99, 299.99, 539.99], // 40% off Standard
+    },
+    TWD: {
+      standard: [569, 1040, 2300, 3970, 6780, 14750, 26000],
+      pro:      [341,  624, 1380, 2380, 4060,  8850, 15600],
+    },
   };
 
   document.querySelectorAll('[data-plan]').forEach(col => {
     const plan = col.dataset.plan;
     const isPro = plan === 'pro';
-    const per = PAYG[plan].perCredit;
-    const listPer = PAYG.standard.perCredit;
     const $ = key => col.querySelector(`[data-bind="${key}"]`);
     const packs = col.querySelector('.packs');
     let selected = 2; // 500 credits
@@ -1241,16 +1248,18 @@
     const rows = [...packs.querySelectorAll('.pack-row')];
 
     function render() {
-      const credits = PAYG_PACKS[selected];
+      // TWD and USD use their own price lists; everything else is converted from USD
+      const base = currency === 'TWD' ? 'TWD' : 'USD';
+      const totals = PAYG_TOTALS[base][plan], list = PAYG_TOTALS[base].standard;
       rows.forEach((row, i) => {
         row.classList.toggle('is-selected', i === selected);
-        row.querySelector('[data-now]').innerHTML = smallPrefix(money(per[i], 'TWD', { perUnit: true }));
-        if (isPro) row.querySelector('[data-og]').textContent = money(listPer[i], 'TWD', { perUnit: true }) + '/credit(s)';
+        row.querySelector('[data-now]').innerHTML = smallPrefix(money(totals[i] / PAYG_PACKS[i], base, { perUnit: true }));
+        if (isPro) row.querySelector('[data-og]').textContent = money(list[i] / PAYG_PACKS[i], base, { perUnit: true }) + '/credit(s)';
       });
-      $('price').innerHTML = smallPrefix(money(Math.round(credits * per[selected]), 'TWD'));
+      $('price').innerHTML = smallPrefix(money(totals[selected], base));
       if (isPro) {
-        $('og').textContent = money(Math.round(credits * listPer[selected]), 'TWD');
-        $('badge').textContent = `${Math.round((1 - per[selected] / listPer[selected]) * 100)}% OFF`;
+        $('og').textContent = money(list[selected], base);
+        $('badge').textContent = `${Math.round((1 - totals[selected] / list[selected]) * 100)}% OFF`;
       }
     }
     packs.addEventListener('change', e => { selected = +e.target.value; render(); });
