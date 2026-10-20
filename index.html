@@ -545,22 +545,51 @@
   }
 
   /* ---------- Responsive ---------- */
+  /* Tablet (e.g. iPad mini landscape ~1133px): same layout, lighter density */
   @media (max-width: 1280px) {
-    .page { padding: 0 40px 64px; }
-    .hero { padding: 56px 0 0; }
-    /* Card content keeps at least 320px (+32px padding each side); when three no longer fit, the row scrolls sideways */
+    .page { padding: 0 32px 56px; }
+    .hero { padding: 40px 0 0; gap: 24px; }
+    .hero h1 { font-size: 34px; line-height: 40px; }
+    .tabs { width: 480px; padding: 6px; }
+    .tab { font-size: 20px; line-height: 28px; padding: 12px; }
+    .billing button { min-width: 104px; font-size: 16px; line-height: 24px; padding: 6px 12px; }
+    .billing .save { font-size: 13px; line-height: 18px; }
+    .subtitle { font-size: 16px; line-height: 24px; }
+
+
+    /* Card content keeps at least 296px (+24px padding each side) so three fit on iPad mini landscape (1133px); when three no longer fit, the row scrolls sideways */
     .cards {
-      gap: 24px;
+      gap: 16px;
       justify-content: flex-start;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      scroll-padding: 0 40px;
+      scroll-padding: 0 32px;
       /* room for card shadows / badge inside the scroll area, bleeding to the screen edge */
-      width: calc(100% + 80px);
-      margin: -20px -40px -40px;
-      padding: 20px 40px 40px;
+      width: calc(100% + 64px);
+      margin: -20px -32px -40px;
+      padding: 20px 32px 40px;
     }
-    .card-col, .card-col.paid { flex: 1 0 384px; min-width: 384px; max-width: none; scroll-snap-align: start; }
+    .card-col, .card-col.paid { flex: 1 0 344px; min-width: 344px; max-width: none; scroll-snap-align: start; }
+    .card { padding: 24px; border-radius: 28px; gap: 12px; }
+    .card-body { gap: 14px; }
+    .plan-title { padding: 6px 0; }
+    .plan-name { font-size: 18px; line-height: 26px; }
+    .price { font-size: 46px; line-height: 54px; }
+    .per-mo { font-size: 18px; }
+    .og-price { font-size: 20px; line-height: 28px; }
+    .tier-badge { font-size: 17px; }
+    .btn { height: 44px; font-size: 18px; line-height: 26px; }
+    .features { gap: 10px; padding: 4px; }
+    .features li, .sub-features li { font-size: 15px; line-height: 22px; }
+    .features li img { width: 18px; height: 18px; }
+    .badge { font-size: 16px; line-height: 24px; }
+  }
+  /* Desktop header on smaller laptops / iPad landscape (mobile header takes over at 1024px) */
+  @media (min-width: 1025px) and (max-width: 1280px) {
+    .site-header { gap: 24px; padding: 0 24px; }
+    .site-nav a { padding: 0 12px; font-size: 16px; line-height: 24px; }
+    .site-nav a img { width: 18px; height: 18px; }
+    .signup-btn { height: 40px; padding: 0 16px; font-size: 16px; line-height: 24px; }
   }
   /* Stacked layout */
   @media (max-width: 768px) {
