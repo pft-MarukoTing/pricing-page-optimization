@@ -798,6 +798,7 @@
   .cmp-cell img.mark { width: 20px; height: 20px; }
   .cmp-cell img.info { width: 14px; height: 14px; }
   .cmp-row .cost-sm { display: none; }
+  .cmp-note { margin: 24px 0 0; padding: 0 8px; font-size: 16px; line-height: 24px; color: #15171f; }
 
   @media (prefers-reduced-motion: reduce) { .cmp-body, .cmp-group-title img { transition: none; } }
 
@@ -1132,8 +1133,8 @@
   <div class="compare-inner">
     <h2 id="compare-title">Compare All Plans</h2>
     <div class="cmp-head">
-      <div class="cmp-head-label">Tools</div>
-      <div class="cmp-head-label center">Credit Cost</div>
+      <div class="cmp-head-label">Plan</div>
+      <div class="cmp-head-label center">Credit Usage</div>
       <div class="cmp-plan">
         <div class="cmp-plan-name">Free</div>
         <div class="cmp-plan-sub"><span class="lg">5 free credits upon sign-up</span><span class="sm">Sign up for 5 credits</span></div>
@@ -1151,6 +1152,7 @@
       </div>
     </div>
     <div class="cmp-groups"></div>
+    <p class="cmp-note">Users on the Plus/Pro plan can use subscription features without credit consumption and download without watermark.</p>
   </div>
 </section>
 
@@ -1503,56 +1505,72 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !curMenu.hidden) { openMenu(false); curBtn.focus(); } });
   setCurrency('USD');
 
-  /* ===== Compare All Plans data (Figma 2304-16868) =====
-     cells: [credit cost, Free, Plus, Pro]; "✓" = included, "–" = not included, "…ⓘ" = value with info icon */
+  /* ===== Compare All Plans data (content from the live pricing page, 2026-10-20) =====
+     cells: [credit usage, Free, Plus, Pro]; "✓" = included, "–" = not included.
+     Notes: the live page shows "From null credit(s) / null sec(s)" for Text to Video and Video Generation
+     (looks like a data bug) — shown as "- -" here. "AI Portrait Generator" is assumed from the Figma table:
+     the screenshots cut off the row(s) between AI Hair Color and AI Hairstyle Generator. */
   const COMPARE = [
+    { title: null, rows: [
+      ['Free Credits', '', 'Sign up for 5 credits', '100 credits / month', '300 credits / month'],
+      ['Watermark free', '', '–', '✓', '✓'],
+    ]},
     { title: 'AI Photo Editing', rows: [
-      ['Photo Enhancer', '- -', '3 / day', '5 / day', '✓'],
-      ['AI Colorize', '- -', '3 / day', '✓', '✓'],
-      ['Color Correction', '- -', '3 / day', '✓', '✓'],
-      ['AI Lighting', '- -', '3 / day', '✓', '✓'],
-      ['AI Image Extender', '- -', '1 / day', '100 / day ⓘ', '200 / day ⓘ'],
-      ['AI Replace', '- -', '3 / day', '100 / day ⓘ', '200 / day ⓘ'],
-      ['Object Removal (Standard)', '- -', '3 / day', '✓', '✓'],
-      ['Object Removal (Pro)', '- -', '–', '–', '200 / day ⓘ'],
-      ['Remove Background, Blur Background, Change Background', '- -', '3 / day', '5 / day', '✓'],
+      ['Photo Enhancer', '- -', '2 use(s) / day', '5 use(s) / day', '✓'],
+      ['Photo Repair', '- -', '2 use(s) / day', '5 use(s) / day', '✓'],
+      ['AI Colorize', '- -', '3 use(s) / day', '✓', '✓'],
+      ['AI Color Correction', '- -', '3 use(s) / day', '✓', '✓'],
+      ['AI Lighting', '- -', '2 use(s) / day', '200 use(s) / day', '250 use(s) / day'],
+      ['AI Image Extender', '- -', '1 use(s) / day', '200 use(s) / day', '200 use(s) / day'],
+      ['AI Replace', '- -', '2 use(s) / day', '✓', '✓'],
+      ['Object Removal (Standard)', '- -', '3 use(s) / day', '✓', '✓'],
+      ['Object Removal (Advanced)', '- -', '1 use(s) / day', '1 use(s) / day', '150 use(s) / day'],
+      ['Remove Background, Blur Background, Change Background', '- -', '3 use(s) / day', '5 use(s) / day', '✓'],
       ['Crop', '- -', '✓', '✓', '✓'],
       ['Flip & Rotate', '- -', '✓', '✓', '✓'],
       ['Resize', '- -', '✓', '✓', '✓'],
       ['Adjust Light & Color', '- -', '✓', '✓', '✓'],
-      ['AI Image Generator', '2 credits', '✓', '✓', '✓'],
+      ['Effects', '- -', 'Limited', '✓', '✓'],
+      ['AI Image Generator', 'From 1 credit(s) / 1 Image(s)', '✓', '✓', '✓'],
+      ['Image Templates', 'From 1 credit(s) / 1 Image(s)', '✓', '✓', '✓'],
     ]},
     { title: 'AI Portrait', rows: [
       ['AI Makeup Virtual Try On', '- -', '–', '✓', '✓'],
-      ['AI Reshape', '- -', '–', '✓', '✓'],
-      ['AI Retouch', '- -', '–', '–', '✓'],
-      ['Hair Color', '- -', '1 / day', '✓', '✓'],
-      ['AI Portrait Generator', '2 credits', '✓', '✓', '✓'],
-      ['AI Headshot Generator', '20 images = 30 credits', '✓', '✓', '✓'],
-      ['AI Studio Generator', '10 images = 10 credits', '✓', '✓', '✓'],
-      ['AI Avatar Generator', '50 images = 20 credits', '✓', '✓', '✓'],
-      ['AI Face Swap', '1 - 2 credits', '✓', '✓', '✓'],
-      ['AI Hairstyle Generator', '2 credits', '✓', '✓', '✓'],
-      ['AI Bang Generator', '2 credits', '✓', '✓', '✓'],
-      ['AI Hair Volume', '2 credits', '✓', '✓', '✓'],
-      ['AI Hair Extension', '2 credits', '✓', '✓', '✓'],
-      ['AI Hair Wavy', '2 credits', '✓', '✓', '✓'],
-      ['Beard Style', '2 credits', '✓', '✓', '✓'],
-      ['AI Makeup Transfer', '2 credits', '✓', '✓', '✓'],
-      ['AI Clothes', '2 credits', '✓', '✓', '✓'],
+      ['AI Face Reshape', '- -', '–', '✓', '✓'],
+      ['AI Face Retouch', '- -', '–', '–', '✓'],
+      ['AI Body Reshape', '- -', '–', 'Limited', '✓'],
+      ['AI Hair Color', '- -', '1 use(s) / day', '✓', '✓'],
+      ['AI Portrait Generator', '2 credit(s)', '✓', '✓', '✓'], // assumed, see note above
+      ['AI Hairstyle Generator', '2 credit(s)', '✓', '✓', '✓'],
+      ['AI Face Swap', '1 - 2 credit(s)', '✓', '✓', '✓'],
+      ['AI Clothes', '2 credit(s)', '✓', '✓', '✓'],
+      ['AI Beard Generator', '2 credit(s)', '✓', '✓', '✓'],
+      ['AI Makeup Transfer', '2 credit(s)', '✓', '✓', '✓'],
+      ['AI Headshot Generator', '20 image(s) = 30 credit(s)', '✓', '✓', '✓'],
+      ['AI Studio Generator', '10 image(s) = 10 credit(s)', '✓', '✓', '✓'],
+      ['AI Avatar Generator', '10 image(s) = 10 credit(s)', '✓', '✓', '✓'],
     ]},
     { title: 'AI Video Editing', rows: [
-      ['Video Enhancer', '1 credit / 2 sec', '✓', '✓', '✓'],
-      ['Video Face Swap', '1 credit / 4-5 sec', '✓', '✓', '✓'],
-      ['Video Style Transfer', '4 credits / 1 sec', '✓', '✓', '✓'],
-      ['Image to Video (Standard)', '2 credits / 1 sec', '✓', '✓', '✓'],
-      ['Image to Video (Adv)', '5 credits / 1 sec', '✓', '✓', '✓'],
-      ['Image to Video (Pro)', '6 credits / 1 sec', '✓', '✓', '✓'],
+      ['Video Enhancer', '1 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
+      ['Video Face Swap', '1 credit(s) / 2 - 3 sec(s)', '✓', '✓', '✓'],
+      ['Video Style Transfer', '4 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
+      ['Image to Video', 'From 2 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
+      ['Text to Video', '- -', '✓', '✓', '✓'], // live page: "From null credit(s) / null sec(s)"
+      ['Video Object Removal', 'From 2 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
+      ['AI Video Editor', 'From 4 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
+      ['Character Motion Swap', 'From 4 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
+      ['Video Templates', 'From 1 credit(s) / 1 sec(s)', '✓', '✓', '✓'],
+    ]},
+    { title: 'AI Agent', rows: [
+      ['General Chat', '5 credit(s)', '2 use(s) / lifetime', '2 use(s) / lifetime', '5 use(s) / day'],
+      ['Multi Image Upload', '8 - 10 credit(s)', '✓', '✓', '✓'],
+      ['Advanced Editing and Generation', '12 credit(s)', '✓', '✓', '✓'],
+      ['Video Generation', '- -', '✓', '✓', '✓'], // live page: "From null credit(s) / null sec(s)"
     ]},
     { title: 'Others', rows: [
-      ['Batch Enhance', '- -', '–', '1 / day', '✓'],
+      ['Batch Photo Enhancer', '- -', '–', '1 use(s) / day', '✓'],
       ['Batch Image Converter', '- -', '–', '✓', '✓'],
-      ['Commercial Use', '- -', '–', '–', '✓'],
+      ['Commercial use allowed', '- -', '–', '–', '✓'],
     ]},
   ];
   const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -1565,8 +1583,8 @@
     return `<div class="cmp-cell ${cls}">${inner}</div>`;
   }
   document.querySelector('.cmp-groups').innerHTML = COMPARE.map((g, gi) => `
-    <div class="cmp-group">
-      <button class="cmp-group-title" type="button" aria-expanded="true" aria-controls="cmp-body-${gi}">${esc(g.title)}<img src="assets/chevron-section.svg" alt="" width="28" height="28"></button>
+    <div class="cmp-group${g.title ? '' : ' no-title'}">
+      ${g.title ? `<button class="cmp-group-title" type="button" aria-expanded="true" aria-controls="cmp-body-${gi}">${esc(g.title)}<img src="assets/chevron-section.svg" alt="" width="28" height="28"></button>` : ''}
       <div class="cmp-body" id="cmp-body-${gi}"><div>
         ${g.rows.map(([tool, cost, a, b, c]) => `
         <div class="cmp-row">
