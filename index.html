@@ -6,7 +6,7 @@
 <title>Choose Your Perfect Pack</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;800&family=Wix+Madefor+Display:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700;800&family=Wix+Madefor+Display:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --text-strong: rgba(9, 22, 26, 0.95);
@@ -425,25 +425,26 @@
     line-height: 20px;
   }
 
+  /* Figma 2213-16792 (premium_icon) */
   .tier-badge {
     display: inline-block;
-    padding: 0 10px;
-    border-radius: 16px;
+    padding: 3.5px 8px 2.5px;
+    border-radius: 100px;
     color: #fff;
     font-family: var(--font-body);
-    font-weight: 800;
-    font-size: 18px;
-    line-height: 26px;
-    letter-spacing: 0.3px;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1;
+    opacity: 0.8;
   }
-  .tier-badge.plus { background: #7dd3f0; }
+  .tier-badge.plus { background-image: linear-gradient(31deg, #44e3ed 2.43%, #03ade2 67.21%); }
   .per-mo { font-size: 22px; line-height: 28px; font-weight: 600; color: #191919; }
   .card.pro .per-mo { color: var(--pro); }
   .price .cur { font-size: 24px; letter-spacing: 0; }
   .per-credit .val .cur { font-size: 14px; }
-  .sub-features li { font-weight: 400; font-size: 16px; line-height: 24px; color: var(--text-strong); align-items: flex-start; }
+  .sub-features li { font-weight: 600; font-size: 16px; line-height: 24px; color: var(--text-strong); align-items: flex-start; }
   .sub-features li img { margin-top: 2px; }
-  .sub-features .hl { font-weight: 400; }
+  .sub-features .hl { font-weight: 600; }
   .cards[data-panel="sub"] .card { flex: 1; }
   .cards[data-panel="payg"] .card { flex: 1; }
   /* AI Agent rows pinned to the bottom of each subscription card */
@@ -458,14 +459,11 @@
   }
   .agent-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .agent-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; line-height: 20px; color: #15171f; white-space: nowrap; }
-  .agent-name .spark { flex: none; color: var(--brand); }
+  .agent-name .spark { flex: none; width: 12px; height: 12px; color: var(--brand); }
   .agent-name .info { width: 12px; height: 12px; transform: scaleY(-1); margin-left: -2px; }
   .agent-link { display: inline-flex; align-items: center; gap: 4px; color: var(--brand); font-weight: 400; font-size: 14px; line-height: 20px; text-decoration: none; white-space: nowrap; }
   .agent-link:hover { text-decoration: underline; }
   .cards[data-panel="payg"] .card .valid { margin-top: auto; }
-  /* Two PAYG cards: centred, but still reachable when the row scrolls */
-  .cards[data-panel="payg"] > :first-child { margin-left: auto; }
-  .cards[data-panel="payg"] > :last-child { margin-right: auto; }
   .usage.tools h4 { display: flex; align-items: center; justify-content: space-between; color: var(--text-strong); }
   .usage.tools h4 img { width: 16px; height: 16px; transform: scaleY(-1); }
   .usage.tools li { justify-content: space-between; font-weight: 400; }
@@ -477,27 +475,28 @@
     position: sticky;
     top: 0;
     z-index: 20;
-    height: 66px;
+    height: 64px;
     display: flex;
     align-items: center;
     gap: 40px;
-    padding: 0 16px 0 30px;
+    padding: 0 32px;
     background: #fff;
-    border-bottom: 1px solid transparent;
-    transition: border-color .2s;
   }
-  .site-header.is-scrolled { border-bottom-color: var(--stroke-weak); }
-  .brand { display: flex; align-items: center; gap: 10px; flex: none; text-decoration: none; }
-  .brand .app-icon { width: 42px; height: 42px; border-radius: 9px; }
-  .brand .wm-youcam { width: 115px; height: 24px; }
-  .brand .wm-editor { width: 131px; height: 18px; align-self: center; margin-top: 6px; margin-left: -2px; }
-  .site-nav { flex: 1; display: flex; align-items: center; min-width: 0; }
+  .hd-left { display: flex; align-items: center; gap: 12px; flex: none; }
+  .hd-menu { display: none; width: 32px; height: 32px; }
+  .brand { display: flex; align-items: center; text-decoration: none; }
+  .brand .logo-symbol { display: none; width: 32px; height: 32px; }
+  /* Wordmark: 256×25 box, "Online Editor" sits on the YouCam baseline */
+  .logo-full { position: relative; display: block; width: 256px; height: 25px; }
+  .logo-full .wm-youcam { position: absolute; left: 1px; top: 0.5px; width: 115px; height: 24px; }
+  .logo-full .wm-editor { position: absolute; left: 124px; top: 7px; width: 131px; height: 17.7px; }
+  .site-nav { flex: 1; display: flex; align-items: center; min-width: 0; overflow: hidden; }
   .site-nav a {
     height: 42px;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
     padding: 0 20px;
+    gap: 0;
     border-radius: 32px;
     font-weight: 600;
     font-size: 18px;
@@ -505,18 +504,21 @@
     color: var(--text-strong);
     text-decoration: none;
     white-space: nowrap;
+    flex: none;
   }
-  .site-nav a img { width: 20px; height: 20px; }
-  .site-nav a svg { color: var(--text-weak); }
+  .site-nav a img { width: 20px; height: 20px; margin-left: 4px; margin-right: -4px; }
   .site-nav a:hover { background: rgba(17,24,26,0.05); }
   .site-nav a.is-current { color: var(--brand); }
-  .header-right { display: flex; align-items: center; gap: 12px; flex: none; }
-  .start-btn {
+  .header-right { display: flex; align-items: center; gap: 12px; flex: none; margin-left: auto; }
+  .icon-btn { display: none; width: 40px; height: 40px; border-radius: 32px; padding: 8px; box-sizing: border-box; }
+  .icon-btn img { display: block; width: 24px; height: 24px; }
+  .crown-btn { background-image: linear-gradient(89.77deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%); }
+  .wand-btn { border: 1px solid rgba(17,24,26,0.2); padding: 7px; }
+  .signup-btn {
     height: 42px;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 0 20px 0 16px;
+    padding: 0 20px;
     border-radius: 32px;
     background: var(--brand);
     color: #fff;
@@ -527,54 +529,19 @@
     white-space: nowrap;
     transition: filter .15s;
   }
-  .start-btn:hover { filter: brightness(1.05); }
-  .avatar {
-    position: relative;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: 0;
-    background: #15171f;
-    color: #fff;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-  }
-  .avatar .dot { position: absolute; top: -2px; right: -4px; width: 8px; height: 8px; border-radius: 50%; background: #f23b77; }
-  .nav-toggle { display: none; border: 0; background: none; padding: 8px; margin-left: -8px; color: var(--text-strong); cursor: pointer; }
+  .signup-btn:hover { filter: brightness(1.05); }
+  .signup-btn .sm { display: none; }
 
-  @media (max-width: 1080px) {
-    .site-header { gap: 16px; padding: 0 16px; }
-    .site-nav a { padding: 0 12px; font-size: 16px; }
-    .start-btn { font-size: 16px; }
-  }
-  @media (max-width: 900px) {
-    .nav-toggle { display: inline-flex; }
-    .site-nav {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      flex-direction: column;
-      align-items: stretch;
-      padding: 8px 16px 16px;
-      background: #fff;
-      border-bottom: 1px solid var(--stroke-weak);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.06);
-    }
-    .site-header.nav-open .site-nav { display: flex; }
-    .site-nav a { justify-content: space-between; padding: 0 12px; }
-    .header-right { margin-left: auto; }
-  }
-  @media (max-width: 600px) {
-    .site-header { height: 60px; gap: 8px; }
-    .brand .app-icon { width: 34px; height: 34px; border-radius: 8px; }
-    .brand .wm-youcam { width: 86px; height: 18px; }
-    .brand .wm-editor { display: none; }
-    .start-btn { width: 38px; height: 38px; padding: 0; justify-content: center; }
-    .start-btn span { display: none; }
-    .avatar { width: 38px; height: 38px; }
+  /* Mobile header (Figma 2080-45957) — the hamburger is static for now */
+  @media (max-width: 1024px) {
+    .site-header { padding: 0 16px; gap: 16px; }
+    .hd-menu { display: block; }
+    .brand .logo-symbol { display: block; }
+    .logo-full, .site-nav { display: none; }
+    .icon-btn { display: block; }
+    .signup-btn { height: 40px; padding: 0 16px; font-size: 16px; line-height: 24px; }
+    .signup-btn .lg { display: none; }
+    .signup-btn .sm { display: inline; }
   }
 
   /* ---------- Responsive ---------- */
@@ -594,7 +561,6 @@
       padding: 20px 40px 40px;
     }
     .card-col, .card-col.paid { flex: 1 0 384px; min-width: 384px; max-width: none; scroll-snap-align: start; }
-    .cards[data-panel="payg"] .card-col { max-width: 460px; }
   }
   /* Stacked layout */
   @media (max-width: 768px) {
@@ -630,29 +596,27 @@
 </head>
 <body>
 <header class="site-header">
-  <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false">
-    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-  </button>
-  <a class="brand" href="#" aria-label="YouCam Online Editor">
-    <img class="app-icon" src="assets/app-icon.svg" alt="" width="42" height="42">
-    <img class="wm-youcam" src="assets/logo-youcam.svg" alt="" width="115" height="24">
-    <img class="wm-editor" src="assets/logo-online-editor.svg" alt="" width="131" height="18">
-  </a>
+  <!-- Desktop: Figma 2304-17008 · Mobile: Figma 2080-45957 -->
+  <div class="hd-left">
+    <img class="hd-menu" src="assets/menu.svg" alt="" width="32" height="32">
+    <a class="brand" href="#" aria-label="YouCam Online Editor">
+      <img class="logo-symbol" src="assets/logo-symbol.svg" alt="" width="32" height="32">
+      <span class="logo-full">
+        <img class="wm-youcam" src="assets/logo-youcam.svg" alt="" width="115" height="24">
+        <img class="wm-editor" src="assets/logo-online-editor.svg" alt="" width="131" height="18">
+      </span>
+    </a>
+  </div>
   <nav class="site-nav" aria-label="Main">
     <a href="#">Product <img src="assets/nav-chevron.svg" alt="" width="20" height="20"></a>
     <a href="#">Use Case <img src="assets/nav-chevron.svg" alt="" width="20" height="20"></a>
+    <a href="#">API <img src="assets/nav-chevron.svg" alt="" width="20" height="20"></a>
     <a href="#" class="is-current" aria-current="page">Pricing</a>
-    <a href="#" target="_blank" rel="noopener">API <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M9 3h4v4M13 3L7.5 8.5M11 9.5V13H3V5h3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   </nav>
   <div class="header-right">
-    <a class="start-btn" href="#">
-      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4 16L12.5 7.5M11 6l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15 2l.6 1.4L17 4l-1.4.6L15 6l-.6-1.4L13 4l1.4-.6zM6 3l.4.9.9.4-.9.4L6 5.6l-.4-.9-.9-.4.9-.4zM16.5 11l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4z" fill="currentColor"/></svg>
-      <span>Start Editing</span>
-    </a>
-    <button class="avatar" type="button" aria-label="Account">
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="8.5" r="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      <i class="dot"></i>
-    </button>
+    <a class="icon-btn crown-btn" href="#" aria-label="Pricing"><img src="assets/crown.svg" alt="" width="24" height="24"></a>
+    <a class="icon-btn wand-btn" href="#" aria-label="Start editing"><img src="assets/magic-wand.svg" alt="" width="24" height="24"></a>
+    <a class="signup-btn" href="#"><span class="lg">Log In / Sign Up</span><span class="sm">Sign Up</span></a>
   </div>
 </header>
 <main class="page">
@@ -779,6 +743,24 @@
 
     <!-- ===== Pay As You Go ===== -->
     <div class="cards" data-panel="payg" hidden>
+      <!-- Free -->
+      <div class="card-col free">
+        <div class="card">
+          <div class="card-body">
+            <div class="plan-title">
+              <p class="plan-name">Free account</p>
+              <div class="price-row"><p class="price" data-bind="payg-free-price">NT$0</p></div>
+            </div>
+            <button class="btn btn-outline" type="button">Sign up free</button>
+            <ul class="features sub-features">
+              <li><img src="assets/circletick.svg" alt=""><span>Sign up for free credits</span></li>
+              <li><img src="assets/circletick.svg" alt=""><span>Save image with watermark</span></li>
+              <li><img src="assets/circletick.svg" alt=""><span>No credit card needed</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       <!-- Standard -->
       <div class="card-col paid" data-plan="standard">
         <div class="card">
@@ -1022,6 +1004,9 @@
     rerenders.push(slider.refresh);
   });
 
+  const paygFree = document.querySelector('[data-bind="payg-free-price"]');
+  rerenders.push(() => { paygFree.innerHTML = smallPrefix(money(0, 'TWD').replace(/\.0+$/, '')); });
+
   /* ===== Currency dropdown ===== */
   const CURRENCIES = ['USD', 'GBP', 'CAD', 'AUD', 'TWD', 'HKD', 'JPY', 'KRW', 'EUR', 'CHF',
                       'MXN', 'CLP', 'BRL', 'TRY', 'THB', 'IDR', 'RUB', 'CNY', 'VND', 'PLN'];
@@ -1054,18 +1039,6 @@
   document.addEventListener('click', e => { if (!e.target.closest('.currency-wrap')) openMenu(false); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !curMenu.hidden) { openMenu(false); curBtn.focus(); } });
   setCurrency('USD');
-
-  /* ===== Header ===== */
-  const siteHeader = document.querySelector('.site-header');
-  const navToggle = document.querySelector('.nav-toggle');
-  navToggle.addEventListener('click', () => {
-    const open = siteHeader.classList.toggle('nav-open');
-    navToggle.setAttribute('aria-expanded', open);
-    navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-  });
-  const onScroll = () => siteHeader.classList.toggle('is-scrolled', window.scrollY > 4);
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
 
   /* ===== Tabs ===== */
   document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
