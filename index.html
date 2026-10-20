@@ -295,11 +295,12 @@
   .slider-top { display: flex; flex-direction: column; gap: 6px; }
   .credit-amount { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; }
   .credit-amount > img { width: 20px; height: 20px; flex: none; }
-  .credit-amount .row { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 8px; }
-  .credit { flex: 1; display: flex; align-items: baseline; gap: 4px; min-width: 0; }
+  /* Per-credit price drops to its own line (right-aligned) when it doesn't fit beside the credit count */
+  .credit-amount .row { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; row-gap: 0; }
+  .credit { flex: none; display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
   .credit .num { font-weight: 600; font-size: 20px; line-height: 28px; font-variant-numeric: tabular-nums; }
   .credit .unit { font-weight: 600; font-size: 16px; line-height: 24px; color: var(--text-weak); }
-  .per-credit { display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
+  .per-credit { margin-left: auto; display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
   .per-credit .val { font-weight: 600; font-size: 20px; line-height: 28px; font-variant-numeric: tabular-nums; }
   .per-credit .suffix { font-size: 14px; line-height: 20px; }
   .card.pro .per-credit .now { color: var(--pro); }
@@ -456,17 +457,98 @@
     gap: 14px;
     width: 100%;
   }
-  .agent-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .agent-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .agent-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; line-height: 20px; color: #15171f; white-space: nowrap; }
   .agent-name .spark { flex: none; width: 12px; height: 12px; color: var(--brand); }
   .agent-name .info { width: 12px; height: 12px; transform: scaleY(-1); margin-left: -2px; }
+  .info-btn { display: inline-flex; padding: 4px; margin: -4px -4px -4px -6px; border: 0; background: none; border-radius: 50%; cursor: pointer; }
+  .info-btn:hover, .info-btn[aria-expanded="true"] { background: rgba(17,24,26,0.06); }
+  .agent-name .info-btn .info { margin-left: 0; }
+  .agent-tip {
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 8px);
+    z-index: 5;
+    width: min(300px, 100%);
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #15171f;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .agent-tip b { display: block; margin-bottom: 4px; font-weight: 600; font-size: 15px; line-height: 22px; }
   .agent-link { display: inline-flex; align-items: center; gap: 4px; color: var(--brand); font-weight: 400; font-size: 14px; line-height: 20px; text-decoration: none; white-space: nowrap; }
   .agent-link:hover { text-decoration: underline; }
   .cards[data-panel="payg"] .card .valid { margin-top: auto; }
-  .usage.tools h4 { display: flex; align-items: center; justify-content: space-between; color: var(--text-strong); }
-  .usage.tools h4 img { width: 16px; height: 16px; transform: scaleY(-1); }
-  .usage.tools li { justify-content: space-between; font-weight: 400; }
-  .usage.tools li b { flex: none; font-weight: 600; text-align: right; }
+  /* ---------- Pay As You Go packs ---------- */
+  .tools-box { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 16px; background: rgba(3,173,226,0.05); }
+  .tools-head { display: flex; align-items: center; justify-content: space-between; font-weight: 600; font-size: 14px; line-height: 20px; }
+  .tools-head b { font-weight: 600; }
+  .tools-head img { width: 16px; height: 16px; transform: scaleY(-1); }
+  .tools-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 14px; line-height: 22px; }
+  .tools-row b { font-weight: 700; font-size: 18px; }
+  .packs { display: flex; flex-direction: column; }
+  .pack-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--stroke-weak);
+    cursor: pointer;
+    transition: background-color .15s;
+  }
+  .pack-row:hover { background: rgba(3,173,226,0.04); }
+  .card.pro .pack-row { min-height: 60px; }
+  .card.pro .pack-row.is-selected { background: rgba(255,255,255,0.7); }
+  .pack-row input { position: absolute; opacity: 0; pointer-events: none; }
+  .pack-row .radio {
+    flex: none;
+    position: relative;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(17,24,26,0.3);
+    background: #fff;
+    transition: border-color .15s, background-color .15s;
+  }
+  .pack-row input:checked + .radio { border-color: var(--brand); background: var(--brand); }
+  .pack-row input:checked + .radio::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: #fff; }
+  .pack-row input:focus-visible + .radio { box-shadow: 0 0 0 3px rgba(3,173,226,.35); }
+  .pack-credits { flex: 1; min-width: 0; font-size: 15px; line-height: 22px; white-space: nowrap; }
+  .pack-price { display: flex; flex-direction: column; align-items: flex-end; text-align: right; white-space: nowrap; }
+  .pack-now { font-size: 13px; line-height: 24px; }
+  .pack-now b { font-weight: 600; font-size: 18px; }
+  .pack-now .cur { font-size: 12px; }
+  .pack-og { font-size: 12px; line-height: 16px; color: var(--text-weaker); text-decoration: line-through; }
+  .card.pro .pack-now, .cards[data-panel="payg"] .card.pro .price { color: #00998a; }
+  .show-more {
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: -4px;
+    padding: 6px 10px;
+    border: 0;
+    background: none;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 22px;
+    color: var(--text-strong);
+    cursor: pointer;
+  }
+  .show-more svg { transition: transform .2s; }
+  .show-more[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .cards[data-panel="payg"] .badge {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    border: 0;
+    background-image: linear-gradient(88deg, #ffb802 0%, #ffa51c 33%, #ff8800 100%);
+  }
   .slider-block.compact .credit-amount { padding-bottom: 8px; }
 
   /* ---------- Header ---------- */
@@ -697,7 +779,8 @@
               <a class="agent-link" href="#">Usage details <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
             <div class="agent-row">
-              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <img class="info" src="assets/icon-info.svg" alt="" width="18" height="18"></span>
+              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/icon-info.svg" alt="" width="12" height="12"></button></span>
+              <div class="agent-tip" role="tooltip" hidden><b>Create directly in your AI assistant</b><p>Connect YouCam AI Agent to ChatGPT, Claude, and Gemini to create and edit visual content through conversation.</p></div>
               <a class="agent-link" href="#">Explore <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4.5 11.5l7-7m-5.5 0h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
           </div>
@@ -726,7 +809,8 @@
               <a class="agent-link" href="#">Usage details <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
             <div class="agent-row">
-              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <img class="info" src="assets/icon-info.svg" alt="" width="18" height="18"></span>
+              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/icon-info.svg" alt="" width="12" height="12"></button></span>
+              <div class="agent-tip" role="tooltip" hidden><b>Create directly in your AI assistant</b><p>Connect YouCam AI Agent to ChatGPT, Claude, and Gemini to create and edit visual content through conversation.</p></div>
               <a class="agent-link" href="#">Explore <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4.5 11.5l7-7m-5.5 0h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
           </div>
@@ -760,7 +844,8 @@
               <a class="agent-link" href="#">Usage details <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
             <div class="agent-row">
-              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <img class="info" src="assets/icon-info.svg" alt="" width="18" height="18"></span>
+              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/icon-info.svg" alt="" width="12" height="12"></button></span>
+              <div class="agent-tip" role="tooltip" hidden><b>Create directly in your AI assistant</b><p>Connect YouCam AI Agent to ChatGPT, Claude, and Gemini to create and edit visual content through conversation.</p></div>
               <a class="agent-link" href="#">Explore <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4.5 11.5l7-7m-5.5 0h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
           </div>
@@ -798,14 +883,13 @@
               <div class="price-row"><p class="price" data-bind="price">NT$2,300</p></div>
             </div>
             <button class="btn btn-primary" type="button">Buy now</button>
-            <div class="usage tools">
-              <h4>Included Tools by Plan <img src="assets/icon-info.svg" alt="" width="16" height="16"></h4>
-              <ul>
-                <li><span>Subscribers</span><b>37+ tools</b></li>
-                <li><span>Free &amp; Pay-as-You-Go</span><b>18 AI tools</b></li>
-              </ul>
+            <div class="tools-box">
+              <div class="tools-head"><b>Included Tools by Plan</b><img src="assets/icon-info.svg" alt="" width="16" height="16"></div>
+              <div class="tools-row"><span>Subscribers</span><span><b>37+</b> tools</span></div>
+              <div class="tools-row"><span>Free &amp; Pay-as-You-Go</span><span><b>18</b> AI tools</span></div>
             </div>
-            <div class="slider-block"></div>
+            <div class="packs" role="radiogroup" aria-label="Standard Pack credits"></div>
+            <button class="show-more" type="button" aria-expanded="false"><span>Show more</span> <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           </div>
           <p class="valid">These credits can be used at any time within one year</p>
         </div>
@@ -814,15 +898,18 @@
       <!-- Pro -->
       <div class="card-col paid" data-plan="pro">
         <div class="card pro">
-          <div class="plan-title">
-            <p class="plan-name">Pro Exclusive Pack</p>
-            <div class="price-row">
-              <p class="price" data-bind="price">NT$1,380</p>
-              <span class="strike"><span class="og-price" data-bind="og">NT$2,300</span><img src="assets/cross-line.svg" alt=""></span>
+          <div class="card-body">
+            <div class="plan-title">
+              <p class="plan-name">Pro Exclusive Pack</p>
+              <div class="price-row">
+                <p class="price" data-bind="price">NT$1,380</p>
+                <span class="strike"><span class="og-price" data-bind="og">NT$2,300</span><img src="assets/cross-line.svg" alt=""></span>
+              </div>
             </div>
+            <button class="btn btn-primary" type="button">Subscribe now</button>
+            <div class="packs" role="radiogroup" aria-label="Pro Exclusive Pack credits"></div>
+            <button class="show-more" type="button" aria-expanded="false"><span>Show more</span> <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           </div>
-          <button class="btn btn-pro" type="button">Subscribe now</button>
-          <div class="slider-block"></div>
           <p class="valid">These credits can be used at any time within one year</p>
         </div>
         <span class="badge" data-bind="badge">40% OFF</span>
@@ -1000,40 +1087,83 @@
     renderSub();
   }));
 
-  /* ===== Pay As You Go (TWD; values from the PAYG content screenshot) ===== */
-  const PAYG_STOPS = [100, 200, 500, 1000, 2000];
+  /* ===== Pay As You Go (TWD; 100–2000 from the PAYG content screenshot) ===== */
+  const PAYG_PACKS = [100, 200, 500, 1000, 2000, 5000, 10000];
+  const PAYG_VISIBLE = 5; // the rest appear under "Show more"
   const PAYG = {
-    standard: { perCredit: [5.69, 5.20, 4.60, 3.97, 3.39] },
-    pro:      { perCredit: [3.41, 3.12, 2.76, 2.38, 2.03] }, // crossed-out price = Standard's
+    // 5000 / 10000 are placeholders until real prices arrive
+    standard: { perCredit: [5.69, 5.20, 4.60, 3.97, 3.39, 2.95, 2.60] },
+    pro:      { perCredit: [3.41, 3.12, 2.76, 2.38, 2.03, 1.77, 1.56] }, // crossed-out price = Standard's
   };
 
   document.querySelectorAll('[data-plan]').forEach(col => {
-    const isPro = col.dataset.plan === 'pro';
-    const per = PAYG[col.dataset.plan].perCredit;
+    const plan = col.dataset.plan;
+    const isPro = plan === 'pro';
+    const per = PAYG[plan].perCredit;
     const listPer = PAYG.standard.perCredit;
     const $ = key => col.querySelector(`[data-bind="${key}"]`);
+    const packs = col.querySelector('.packs');
+    let selected = 2; // 500 credits
 
-    const slider = createSlider(col.querySelector('.slider-block'), PAYG_STOPS, 2, index => {
-      const credits = PAYG_STOPS[index];
-      $('price').innerHTML = smallPrefix(money(Math.round(credits * per[index]), 'TWD'));
-      $('per').innerHTML = smallPrefix(money(per[index], 'TWD', { perUnit: true }));
+    packs.innerHTML = PAYG_PACKS.map((c, i) => `
+      <label class="pack-row${i >= PAYG_VISIBLE ? ' extra' : ''}"${i >= PAYG_VISIBLE ? ' hidden' : ''}>
+        <input type="radio" name="pack-${plan}" value="${i}"${i === selected ? ' checked' : ''}>
+        <span class="radio" aria-hidden="true"></span>
+        <span class="pack-credits">${c} credit(s)</span>
+        <span class="pack-price">
+          ${isPro ? '<span class="pack-og" data-og></span>' : ''}
+          <span class="pack-now"><b data-now></b><small>/credit(s)</small></span>
+        </span>
+      </label>`).join('');
+    const rows = [...packs.querySelectorAll('.pack-row')];
+
+    function render() {
+      const credits = PAYG_PACKS[selected];
+      rows.forEach((row, i) => {
+        row.classList.toggle('is-selected', i === selected);
+        row.querySelector('[data-now]').innerHTML = smallPrefix(money(per[i], 'TWD', { perUnit: true }));
+        if (isPro) row.querySelector('[data-og]').textContent = money(listPer[i], 'TWD', { perUnit: true }) + '/credit(s)';
+      });
+      $('price').innerHTML = smallPrefix(money(Math.round(credits * per[selected]), 'TWD'));
       if (isPro) {
-        $('og').textContent = money(Math.round(credits * listPer[index]), 'TWD');
-        $('ogPer').textContent = money(listPer[index], 'TWD', { perUnit: true });
-        $('badge').textContent = `${Math.round((1 - per[index] / listPer[index]) * 100)}% OFF`;
+        $('og').textContent = money(Math.round(credits * listPer[selected]), 'TWD');
+        $('badge').textContent = `${Math.round((1 - per[selected] / listPer[selected]) * 100)}% OFF`;
       }
-    }, b => {
-      // Per-credit price row only exists on Pay As You Go cards.
-      b.querySelector('.per-credit').innerHTML = isPro
-        ? '<span><span class="val now" data-bind="per"></span><span class="suffix now">/credit</span></span>' +
-          '<span class="strike"><span class="og-per" data-bind="ogPer"></span><img src="assets/cross-line-sm.svg" alt=""></span>'
-        : '<span><span class="val" data-bind="per"></span><span class="suffix">/credit</span></span>';
+    }
+    packs.addEventListener('change', e => { selected = +e.target.value; render(); });
+
+    const more = col.querySelector('.show-more');
+    more.addEventListener('click', () => {
+      const open = more.getAttribute('aria-expanded') !== 'true';
+      more.setAttribute('aria-expanded', open);
+      more.querySelector('span').textContent = open ? 'Show less' : 'Show more';
+      rows.slice(PAYG_VISIBLE).forEach(r => { r.hidden = !open; });
     });
-    rerenders.push(slider.refresh);
+
+    render();
+    rerenders.push(render);
   });
 
   const paygFree = document.querySelector('[data-bind="payg-free-price"]');
   rerenders.push(() => { paygFree.innerHTML = smallPrefix(money(0, 'TWD').replace(/\.0+$/, '')); });
+
+  /* ===== AI Agent Connector tooltip (click to toggle) ===== */
+  function closeTips(except) {
+    document.querySelectorAll('.info-btn[aria-expanded="true"]').forEach(btn => {
+      if (btn === except) return;
+      btn.setAttribute('aria-expanded', 'false');
+      btn.closest('.agent-row').querySelector('.agent-tip').hidden = true;
+    });
+  }
+  document.querySelectorAll('.info-btn').forEach(btn => btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const tip = btn.closest('.agent-row').querySelector('.agent-tip');
+    closeTips(btn);
+    tip.hidden = !tip.hidden;
+    btn.setAttribute('aria-expanded', !tip.hidden);
+  }));
+  document.addEventListener('click', e => { if (!e.target.closest('.agent-tip')) closeTips(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTips(); });
 
   /* ===== Currency dropdown ===== */
   const CURRENCIES = ['USD', 'GBP', 'CAD', 'AUD', 'TWD', 'HKD', 'JPY', 'KRW', 'EUR', 'CHF',
