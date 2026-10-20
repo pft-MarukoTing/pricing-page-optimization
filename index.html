@@ -445,48 +445,74 @@
   .sub-features li { font-weight: 600; font-size: 16px; line-height: 24px; color: var(--text-strong); align-items: flex-start; }
   .sub-features li img { margin-top: 2px; }
   .sub-features .hl { font-weight: 600; }
-  .cards[data-panel="sub"] .card { flex: 1; }
+  .cards[data-panel="sub"] .card { flex: 1; gap: 16px; }
   .cards[data-panel="payg"] .card { flex: 1; }
-  /* AI Agent rows pinned to the bottom of each subscription card */
+  /* AI Agent box right after each card's content (Figma 2327-36241) */
   .agent-links {
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid var(--stroke-weak);
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    width: 100%;
+    padding: 20px;
+    border: 1.5px solid var(--stroke-focus);
+    border-radius: 16px;
   }
-  .agent-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .agent-name { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; line-height: 20px; color: #15171f; white-space: nowrap; }
-  .agent-name .spark { flex: none; width: 12px; height: 12px; color: var(--brand); }
-  .agent-name .info { width: 12px; height: 12px; transform: scaleY(-1); margin-left: -2px; }
-  .info-btn { display: inline-flex; padding: 4px; margin: -4px -4px -4px -6px; border: 0; background: none; border-radius: 50%; cursor: pointer; }
+  .agent-row { position: relative; display: flex; align-items: center; gap: 4px; min-height: 32px; }
+  .agent-name { flex: 1; min-width: 0; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: 14px; line-height: 20px; color: var(--text-strong); white-space: nowrap; }
+  .agent-name .info { display: block; width: 12px; height: 12px; }
+  .info-btn { display: inline-flex; padding: 4px; margin: -4px; border: 0; background: none; border-radius: 50%; cursor: pointer; }
   .info-btn:hover, .info-btn[aria-expanded="true"] { background: rgba(17,24,26,0.06); }
-  .agent-name .info-btn .info { margin-left: 0; }
-  .agent-tip {
+  /* Tooltip — YCO web components "Tooltip / Large" (Figma 3550-142326) */
+  .agent-tip, .tools-tip {
     position: absolute;
-    left: 0;
-    bottom: calc(100% + 8px);
     z-index: 5;
-    width: min(300px, 100%);
-    padding: 14px 16px;
-    border-radius: 12px;
-    background: #15171f;
-    color: #fff;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(9,22,26,0.95);
+    color: rgba(255,255,255,0.78);
+    box-shadow: 0 8px 24px -4px rgba(0,0,0,0.16);
+    font-weight: 400;
     font-size: 14px;
     line-height: 20px;
+    text-align: left;
+    white-space: normal;
   }
-  .agent-tip b { display: block; margin-bottom: 4px; font-weight: 600; font-size: 15px; line-height: 22px; }
-  .agent-link { display: inline-flex; align-items: center; gap: 4px; color: var(--brand); font-weight: 400; font-size: 14px; line-height: 20px; text-decoration: none; white-space: nowrap; }
-  .agent-link:hover { text-decoration: underline; }
+  .agent-tip b, .tools-tip b { display: block; margin-bottom: 4px; color: #fff; font-weight: 600; }
+  .agent-tip::after, .tools-tip::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+  }
+  /* above the row, arrow pointing down at the info icon (--arrow-x set from JS) */
+  .agent-tip { left: 0; bottom: calc(100% + 8px); width: min(324px, 100%); }
+  .agent-tip::after { top: 100%; left: calc(var(--arrow-x, 24px) - 8px); border-top: 8px solid rgba(9,22,26,0.95); }
+  .agent-link { display: inline-flex; align-items: center; height: 32px; padding: 0 12px 0 16px; border-radius: 32px; color: var(--brand); font-weight: 600; font-size: 14px; line-height: 20px; text-decoration: underline; text-underline-position: from-font; white-space: nowrap; }
+  .agent-link img { width: 16px; height: 16px; margin-left: 4px; }
+  .agent-link:hover { background: rgba(3,173,226,0.06); }
   .cards[data-panel="payg"] .card .valid { margin-top: auto; }
   /* ---------- Pay As You Go packs ---------- */
   .tools-box { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 16px; background: rgba(3,173,226,0.05); }
   .tools-head { display: flex; align-items: center; justify-content: space-between; font-weight: 600; font-size: 14px; line-height: 20px; }
   .tools-head b { font-weight: 600; }
-  .tools-head img { width: 16px; height: 16px; transform: scaleY(-1); }
+  .tools-head img { display: block; width: 16px; height: 16px; transform: scaleY(-1); }
+  /* Hover / focus tooltip (tap toggles .open on touch screens) */
+  .tip-wrap { position: relative; display: inline-flex; }
+  .tools-info { display: inline-flex; padding: 4px; margin: -4px; border: 0; background: none; border-radius: 50%; cursor: help; }
+  /* below the icon, arrow pointing up at it */
+  .tools-tip {
+    top: calc(100% + 10px);
+    right: -8px;
+    width: 324px;
+    max-width: calc(100vw - 48px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity .15s, transform .15s, visibility .15s;
+  }
+  .tools-tip::after { bottom: 100%; right: 8px; border-bottom: 8px solid rgba(9,22,26,0.95); }
+  .tip-wrap:hover .tools-tip, .tip-wrap:focus-within .tools-tip, .tip-wrap.open .tools-tip { opacity: 1; visibility: visible; transform: none; }
   .tools-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 14px; line-height: 22px; }
   .tools-row b { font-weight: 700; font-size: 18px; }
   .packs { display: flex; flex-direction: column; }
@@ -775,13 +801,13 @@
           </div>
           <div class="agent-links">
             <div class="agent-row">
-              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>YouCam AI Agent</span>
-              <a class="agent-link" href="#">Usage details <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              <span class="agent-name">YouCam AI Agent</span>
+              <a class="agent-link" href="#">Usage details <img src="assets/arrow-down.svg" alt="" width="16" height="16"></a>
             </div>
             <div class="agent-row">
-              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/icon-info.svg" alt="" width="12" height="12"></button></span>
+              <span class="agent-name">AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/ic-info.svg" alt="" width="12" height="12"></button></span>
+              <a class="agent-link" href="#" target="_blank" rel="noopener">Explore <img src="assets/external-link.svg" alt="" width="16" height="16"></a>
               <div class="agent-tip" role="tooltip" hidden><b>Create directly in your AI assistant</b><p>Connect YouCam AI Agent to ChatGPT, Claude, and Gemini to create and edit visual content through conversation.</p></div>
-              <a class="agent-link" href="#">Explore <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4.5 11.5l7-7m-5.5 0h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
           </div>
         </div>
@@ -805,13 +831,13 @@
           </div>
           <div class="agent-links">
             <div class="agent-row">
-              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>YouCam AI Agent</span>
-              <a class="agent-link" href="#">Usage details <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              <span class="agent-name">YouCam AI Agent</span>
+              <a class="agent-link" href="#">Usage details <img src="assets/arrow-down.svg" alt="" width="16" height="16"></a>
             </div>
             <div class="agent-row">
-              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/icon-info.svg" alt="" width="12" height="12"></button></span>
+              <span class="agent-name">AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/ic-info.svg" alt="" width="12" height="12"></button></span>
+              <a class="agent-link" href="#" target="_blank" rel="noopener">Explore <img src="assets/external-link.svg" alt="" width="16" height="16"></a>
               <div class="agent-tip" role="tooltip" hidden><b>Create directly in your AI assistant</b><p>Connect YouCam AI Agent to ChatGPT, Claude, and Gemini to create and edit visual content through conversation.</p></div>
-              <a class="agent-link" href="#">Explore <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4.5 11.5l7-7m-5.5 0h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
           </div>
         </div>
@@ -840,13 +866,13 @@
           </ul>
           <div class="agent-links">
             <div class="agent-row">
-              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>YouCam AI Agent</span>
-              <a class="agent-link" href="#">Usage details <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 3v10m-4-4 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+              <span class="agent-name">YouCam AI Agent</span>
+              <a class="agent-link" href="#">Usage details <img src="assets/arrow-down.svg" alt="" width="16" height="16"></a>
             </div>
             <div class="agent-row">
-              <span class="agent-name"><svg class="spark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 0c.5 4.2 3.8 7.5 8 8-4.2.5-7.5 3.8-8 8-.5-4.2-3.8-7.5-8-8 4.2-.5 7.5-3.8 8-8z" fill="currentColor"/></svg>AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/icon-info.svg" alt="" width="12" height="12"></button></span>
+              <span class="agent-name">AI Agent Connector <button class="info-btn" type="button" aria-label="About AI Agent Connector" aria-expanded="false"><img class="info" src="assets/ic-info.svg" alt="" width="12" height="12"></button></span>
+              <a class="agent-link" href="#" target="_blank" rel="noopener">Explore <img src="assets/external-link.svg" alt="" width="16" height="16"></a>
               <div class="agent-tip" role="tooltip" hidden><b>Create directly in your AI assistant</b><p>Connect YouCam AI Agent to ChatGPT, Claude, and Gemini to create and edit visual content through conversation.</p></div>
-              <a class="agent-link" href="#">Explore <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4.5 11.5l7-7m-5.5 0h5.5v5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
             </div>
           </div>
         </div>
@@ -884,7 +910,12 @@
             </div>
             <button class="btn btn-primary" type="button">Buy now</button>
             <div class="tools-box">
-              <div class="tools-head"><b>Included Tools by Plan</b><img src="assets/icon-info.svg" alt="" width="16" height="16"></div>
+              <div class="tools-head"><b>Included Tools by Plan</b>
+                <span class="tip-wrap">
+                  <button class="tools-info" type="button" aria-label="Which tools need a subscription" aria-describedby="tools-tip"><img src="assets/icon-info.svg" alt="" width="16" height="16"></button>
+                  <span class="tools-tip" id="tools-tip" role="tooltip"><b>Subscription is required for these tools:</b>Photo Enhancer, Object Removal, AI Replace, etc. See the complete list in the pricing table below.</span>
+                </span>
+              </div>
               <div class="tools-row"><span>Subscribers</span><span><b>37+</b> tools</span></div>
               <div class="tools-row"><span>Free &amp; Pay-as-You-Go</span><span><b>18</b> AI tools</span></div>
             </div>
@@ -1147,6 +1178,12 @@
   const paygFree = document.querySelector('[data-bind="payg-free-price"]');
   rerenders.push(() => { paygFree.innerHTML = smallPrefix(money(0, 'TWD').replace(/\.0+$/, '')); });
 
+  /* ===== Included Tools tooltip: hover/focus on desktop, tap toggles on touch ===== */
+  document.querySelectorAll('.tip-wrap').forEach(wrap => {
+    wrap.querySelector('button').addEventListener('click', e => { e.stopPropagation(); wrap.classList.toggle('open'); });
+  });
+  document.addEventListener('click', () => document.querySelectorAll('.tip-wrap.open').forEach(w => w.classList.remove('open')));
+
   /* ===== AI Agent Connector tooltip (click to toggle) ===== */
   function closeTips(except) {
     document.querySelectorAll('.info-btn[aria-expanded="true"]').forEach(btn => {
@@ -1160,6 +1197,9 @@
     const tip = btn.closest('.agent-row').querySelector('.agent-tip');
     closeTips(btn);
     tip.hidden = !tip.hidden;
+    // point the arrow at the icon
+    const row = btn.closest('.agent-row').getBoundingClientRect(), icon = btn.getBoundingClientRect();
+    tip.style.setProperty('--arrow-x', `${icon.left + icon.width / 2 - row.left}px`);
     btn.setAttribute('aria-expanded', !tip.hidden);
   }));
   document.addEventListener('click', e => { if (!e.target.closest('.agent-tip')) closeTips(); });
