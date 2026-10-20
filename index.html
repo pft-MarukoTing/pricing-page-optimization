@@ -498,20 +498,20 @@
   .tools-head b { font-weight: 600; }
   .tools-head img { display: block; width: 16px; height: 16px; transform: scaleY(-1); }
   /* Hover / focus tooltip (tap toggles .open on touch screens) */
-  .tip-wrap { position: relative; display: inline-flex; }
+  .tip-wrap { position: relative; display: inline-flex; vertical-align: middle; }
   .tools-info { display: inline-flex; padding: 4px; margin: -4px; border: 0; background: none; border-radius: 50%; cursor: help; }
   /* below the icon, arrow pointing up at it */
   .tools-tip {
     top: calc(100% + 10px);
-    right: -8px;
+    left: var(--tip-left, -150px); /* set from JS so the bubble stays on screen */
     width: 324px;
-    max-width: calc(100vw - 48px);
+    max-width: calc(100vw - 32px);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-4px);
     transition: opacity .15s, transform .15s, visibility .15s;
   }
-  .tools-tip::after { bottom: 100%; right: 8px; border-bottom: 8px solid rgba(9,22,26,0.95); }
+  .tools-tip::after { bottom: 100%; left: calc(var(--arrow-x, 158px) - 8px); border-bottom: 8px solid rgba(9,22,26,0.95); }
   .tip-wrap:hover .tools-tip, .tip-wrap:focus-within .tools-tip, .tip-wrap.open .tools-tip { opacity: 1; visibility: visible; transform: none; }
   .tools-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 14px; line-height: 22px; }
   .tools-row b { font-weight: 700; font-size: 18px; }
@@ -713,7 +713,8 @@
     .tabs { padding: 6px; }
     .tab { font-size: 18px; line-height: 24px; padding: 12px 8px; }
     .subtitle { display: block; font-size: 14px; line-height: 20px; }
-    .subtitle img { display: inline-block; vertical-align: -3px; margin-left: 2px; width: 15px; height: 15px; }
+    .subtitle img { display: inline-block; vertical-align: -3px; width: 15px; height: 15px; }
+    .subtitle .tip-wrap { margin-left: 6px; }
     .api-link.ghost { display: none; }
     .per-mo { font-size: 18px; }
     .api-link { font-size: 16px; }
@@ -767,7 +768,10 @@
         <button type="button" role="radio" aria-checked="false" data-billing="monthly">Monthly</button>
         <button type="button" role="radio" aria-checked="true" data-billing="yearly" class="is-active">Yearly <span class="save">Save <span data-save>60</span>%</span></button>
       </div>
-      <p class="subtitle" data-panel="payg" hidden>Pay-as-you-go credit pack could only be used in limited Generative-AI tools. <img src="assets/icon-info.svg" alt="" width="17" height="17"></p>
+      <p class="subtitle" data-panel="payg" hidden>Pay-as-you-go credit pack could only be used in limited Generative-AI tools.<span class="tip-wrap">
+          <button class="tools-info" type="button" aria-label="Which tools need a subscription" aria-describedby="payg-tip"><img src="assets/icon-info.svg" alt="" width="17" height="17"></button>
+          <span class="tools-tip" id="payg-tip" role="tooltip"><b>Subscription is required for these tools:</b>Photo Enhancer, Object Removal, AI Replace, etc. See the complete list in the pricing table below.</span>
+        </span></p>
     </div>
   </section>
 
@@ -1179,8 +1183,20 @@
   rerenders.push(() => { paygFree.innerHTML = smallPrefix(money(0, 'TWD').replace(/\.0+$/, '')); });
 
   /* ===== Included Tools tooltip: hover/focus on desktop, tap toggles on touch ===== */
+  // Centre the bubble under its icon, keep it 16px inside the screen, and point the arrow at the icon.
+  function placeTip(wrap) {
+    const tip = wrap.querySelector('.tools-tip');
+    const icon = wrap.querySelector('button').getBoundingClientRect();
+    const box = wrap.getBoundingClientRect();
+    const w = tip.offsetWidth;
+    const center = icon.left + icon.width / 2;
+    const left = Math.min(Math.max(center - w / 2, 16), document.documentElement.clientWidth - 16 - w);
+    tip.style.setProperty('--tip-left', `${left - box.left}px`);
+    tip.style.setProperty('--arrow-x', `${center - left}px`);
+  }
   document.querySelectorAll('.tip-wrap').forEach(wrap => {
-    wrap.querySelector('button').addEventListener('click', e => { e.stopPropagation(); wrap.classList.toggle('open'); });
+    ['mouseenter', 'focusin'].forEach(ev => wrap.addEventListener(ev, () => placeTip(wrap)));
+    wrap.querySelector('button').addEventListener('click', e => { e.stopPropagation(); placeTip(wrap); wrap.classList.toggle('open'); });
   });
   document.addEventListener('click', () => document.querySelectorAll('.tip-wrap.open').forEach(w => w.classList.remove('open')));
 
