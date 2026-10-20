@@ -207,13 +207,12 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
-    filter: drop-shadow(0 12px 15px rgba(0,0,0,0.25));
+    box-shadow: 0 12px 15px rgba(0,0,0,0.25); /* box-shadow, not filter: iOS Safari tiles tall filtered elements */
   }
   .card-col.free .card { flex: 1; }
   .card.pro {
     gap: 16px;
     flex: 1;
-    filter: none;
     box-shadow: 0 12px 30px rgba(0,0,0,0.25);
     background-color: #fff;
     background-image:
@@ -413,7 +412,7 @@
     white-space: nowrap;
     transition: background-color .2s, filter .2s;
   }
-  .billing button.is-active { background: #fff; color: #15171f; filter: drop-shadow(2px 2px 2px rgba(124,124,124,0.25)); }
+  .billing button.is-active { background: #fff; color: #15171f; box-shadow: 2px 2px 2px rgba(124,124,124,0.25); }
   .billing .save {
     background: #f23b77;
     border: 1px solid rgba(255,255,255,0.6);
