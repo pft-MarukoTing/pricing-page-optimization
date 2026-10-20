@@ -6,7 +6,7 @@
 <title>Choose Your Perfect Pack</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700;800&family=Wix+Madefor+Display:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700;800;900&family=Wix+Madefor+Display:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root {
     --text-strong: rgba(9, 22, 26, 0.95);
@@ -271,6 +271,9 @@
     text-align: center;
   }
   .price-row { display: flex; align-items: baseline; justify-content: center; gap: 6px; width: 100%; flex-wrap: wrap; }
+  /* When the crossed-out price drops to its own line, pull it up under the big price (.is-wrapped set from JS) */
+  .price-row.is-wrapped { row-gap: 0; }
+  .price-row.is-wrapped .strike { margin-top: -12px; }
   .price {
     font-weight: 800;
     font-size: 56px;
@@ -326,7 +329,7 @@
 
   /* ---------- Credit slider ---------- */
   .slider-block { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-  .slider-top { display: flex; flex-direction: column; gap: 6px; }
+  .slider-top { display: flex; flex-direction: column; gap: 6px; padding-bottom: 4px; }
   .credit-amount { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; }
   .credit-amount > img { width: 20px; height: 20px; flex: none; }
   /* Per-credit price drops to its own line (right-aligned) when it doesn't fit beside the credit count */
@@ -371,8 +374,19 @@
   .track:not(.dragging) .handle { transition: left .18s ease, transform .15s; }
   .track:hover .handle, .track.dragging .handle { transform: scale(1.08); }
   .track:focus-visible .handle { border-radius: 50%; box-shadow: 0 0 0 3px rgba(3,173,226,.35); }
-  .ticks { display: flex; justify-content: space-between; padding: 0 7px; }
-  .ticks i { width: 2px; height: 8px; border-radius: 2px; background: var(--fill-disabled); }
+  /* Gray stop dots on the track; stops at or before the handle are hidden under the progress bar */
+  .track .dots i {
+    position: absolute;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    border-radius: 50%;
+    background: #b8babb;
+    transition: opacity .18s ease;
+  }
+  .track .dots i.is-passed { opacity: 0; }
+  .track .handle { z-index: 1; }
   .labels { display: flex; align-items: center; gap: 4px; font-size: 12px; line-height: 16px; color: var(--text-weaker); }
   .labels button {
     border: 0; background: none; padding: 0; cursor: pointer;
@@ -472,6 +486,14 @@
     opacity: 0.8;
   }
   .tier-badge.plus { background-image: linear-gradient(31deg, #44e3ed 2.43%, #03ade2 67.21%); }
+  /* Figma 2347-38454 (premium_icon / PRO) */
+  .tier-badge.pro {
+    padding: 2.5px 12px 1.5px;
+    border-radius: 22px;
+    font-weight: 900;
+    opacity: 1;
+    background-image: linear-gradient(89.37deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%), linear-gradient(180deg, #ffc700 0%, #f7a300 100%);
+  }
   .per-mo { font-size: 22px; line-height: 28px; font-weight: 600; color: #191919; }
   .card.pro .per-mo { color: var(--pro); }
   .price .cur { font-size: 24px; letter-spacing: 0; }
@@ -880,7 +902,7 @@
       <div class="card-col paid" data-sub="pro">
         <div class="card pro">
           <div class="plan-title">
-            <p class="plan-name">Pro Exclusive Pack</p>
+            <span class="tier-badge pro">PRO</span>
             <div class="price-row">
               <p class="price" data-bind="pro-price">$4.19</p><span class="per-mo">/mo</span>
               <span class="strike" data-bind="pro-og-wrap"><span class="og-price" data-bind="pro-og">$5.99</span><img src="assets/cross-line.svg" alt=""></span>
@@ -994,9 +1016,9 @@
     <div class="track" role="slider" tabindex="0" aria-label="Credit amount" aria-valuemin="100" aria-valuemax="10000">
       <div class="bar"></div>
       <div class="progress"></div>
+      <div class="dots" aria-hidden="true"></div>
       <img class="handle" src="assets/handle.svg" alt="" width="26" height="26" draggable="false">
     </div>
-    <div class="ticks"></div>
   </div>
   <div class="labels"></div>
 </template>
@@ -1050,7 +1072,6 @@
     const creditsEl = block.querySelector('[data-bind="credits"]');
     track.setAttribute('aria-valuemin', stops[0]);
     track.setAttribute('aria-valuemax', stops[stops.length - 1]);
-    block.querySelector('.ticks').innerHTML = '<i></i>'.repeat(stops.length);
     stops.forEach((c, i) => {
       const b = document.createElement('button');
       b.type = 'button';
@@ -1063,6 +1084,8 @@
     let index = initial;
     // Handle center sits on the tick centers: 8px from each edge, equal gaps.
     const posFor = i => `calc(8px + (100% - 16px) * ${i / (stops.length - 1)})`;
+    const dots = block.querySelector('.dots');
+    dots.innerHTML = stops.map((_, i) => `<i style="left:${posFor(i)}"></i>`).join('');
 
     function set(i) {
       index = Math.max(0, Math.min(stops.length - 1, i));
@@ -1070,6 +1093,7 @@
       track.setAttribute('aria-valuenow', stops[index]);
       track.setAttribute('aria-valuetext', `${fmtNum(stops[index])} credits`);
       [...labels.children].forEach((b, j) => b.classList.toggle('is-active', j === index));
+      [...dots.children].forEach((d, j) => d.classList.toggle('is-passed', j <= index));
       creditsEl.textContent = fmtNum(stops[index]);
       onChange(index);
     }
@@ -1104,15 +1128,32 @@
     return { get index() { return index; }, refresh: () => onChange(index) };
   }
 
-  /* ===== Subscription (placeholder prices) ===== */
+  /* ===== Price rows: flag when the crossed-out price wraps to a second line ===== */
+  function checkPriceWrap(row) {
+    const price = row.querySelector('.price'), strike = row.querySelector('.strike');
+    if (!price || !strike || strike.hidden || !strike.offsetParent) { row.classList.remove('is-wrapped'); return; }
+    row.classList.remove('is-wrapped'); // measure in the natural layout
+    row.classList.toggle('is-wrapped', strike.offsetTop >= price.offsetTop + price.offsetHeight - 4);
+  }
+  const priceRows = [...document.querySelectorAll('.price-row')];
+  const checkAllPriceWraps = () => priceRows.forEach(checkPriceWrap);
+  new ResizeObserver(checkAllPriceWraps).observe(document.body);
+  document.fonts.ready.then(checkAllPriceWraps);
+
+  /* ===== Subscription prices (USD) — from the PM table "YCO (Proposal 2) ensure PF credit system" =====
+     Yearly is shown as $/mo using the table's "Yearly Price/12" row as-is. */
   const SUB = {
     // Pro credits per month; default is 300 (PM spec).
-    proStops: [300, 800, 1500, 2500, 5000, 10000],
-    proMonthly: [14.99, 29.99, 49.99, 79.99, 149.99, 279.99],
-    proYearly:  [71.88, 143.88, 239.88, 383.88, 719.88, 1343.88], // billed once a year
-    plusMonthly: 7.49,
-    plusYearly: 35.88,
-    holidayDiscount: 0.3, // set to 0 when there is no Holiday Discount
+    proStops:      [300,   800,    1500,   2500,   5000,    10000],
+    proMonthly:    [19.99, 34.99,  59.99,  89.99,  164.99,  319.99],
+    proYearly:     [95.99, 249.99, 429.99, 649.99, 1199.99, 2399.99], // billed once a year
+    proYearlyPerMo:[7.99,  20.83,  35.83,  54.17,  99.99,   199.99],
+    plusMonthly: 9.99,
+    plusYearly: 39.99,
+    plusYearlyPerMo: 3.33,
+    // Holiday Discount on Pro. Only while this is > 0 does the card show the
+    // "30% off" badge and the crossed-out regular price. Off for now (0).
+    holidayDiscount: 0,
   };
   let billing = 'yearly';
   const subPro = document.querySelector('[data-sub="pro"]');
@@ -1122,16 +1163,18 @@
     const i = proSlider ? proSlider.index : 0;
     const yearly = billing === 'yearly';
     // Yearly plans are shown as $/mo (Yearly Price / 12).
-    const proList = yearly ? SUB.proYearly[i] / 12 : SUB.proMonthly[i];
-    const proNow = proList * (1 - SUB.holidayDiscount);
+    // Discounted price in whole cents (e.g. 30% off $7.99 rounds down to $5.59).
+    const proList = yearly ? SUB.proYearlyPerMo[i] : SUB.proMonthly[i];
+    const proNow = Math.floor(Math.round(proList * 100) * (1 - SUB.holidayDiscount) + 1e-6) / 100;
     $sub('free-price').innerHTML = smallPrefix(money(0, 'USD').replace(/\.0+$/, ''));
-    $sub('plus-price').innerHTML = smallPrefix(money(yearly ? SUB.plusYearly / 12 : SUB.plusMonthly, 'USD'));
-    $sub('pro-price').innerHTML = smallPrefix(money(Math.floor(proNow * 100) / 100, 'USD'));
+    $sub('plus-price').innerHTML = smallPrefix(money(yearly ? SUB.plusYearlyPerMo : SUB.plusMonthly, 'USD'));
+    $sub('pro-price').innerHTML = smallPrefix(money(proNow, 'USD'));
     $sub('pro-og').textContent = money(proList, 'USD');
     $sub('pro-og-wrap').hidden = !SUB.holidayDiscount;
     $sub('pro-badge').hidden = !SUB.holidayDiscount;
     $sub('pro-badge').textContent = `${Math.round(SUB.holidayDiscount * 100)}% off`;
     $sub('pro-credits').textContent = fmtNum(SUB.proStops[i]);
+    if (typeof checkAllPriceWraps === 'function') checkAllPriceWraps();
   }
 
   // Save % = 1 - (Pro yearly price / (Pro monthly price * 12)), using the default Pro tier.
