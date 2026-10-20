@@ -25,6 +25,9 @@
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
+  /* Never scroll sideways (iOS Safari would also zoom out to fit any overflow) */
+  html, body { overflow-x: hidden; }
+  @supports (overflow: clip) { html, body { overflow-x: clip; } }
   body {
     background: #fff;
     color: var(--text-strong);
@@ -82,11 +85,42 @@
     line-height: 32px;
     color: #000;
     cursor: pointer;
-    transition: background-color .2s, color .2s;
+    transition: color .3s;
   }
-  .tab.is-active {
-    color: #fff;
+  .tab.is-active { color: #fff; }
+
+  /* Sliding pill: one indicator per toggle, moved under the active button from JS (--ind-*) */
+  .tabs, .billing { position: relative; isolation: isolate; }
+  .tabs::before, .billing::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    top: var(--ind-y, 0);
+    width: var(--ind-w, 0);
+    height: var(--ind-h, 0);
+    transform: translateX(var(--ind-x, 0));
+    transition: transform .3s cubic-bezier(.4, 0, .2, 1), width .3s cubic-bezier(.4, 0, .2, 1);
+  }
+  .tabs:not(.ready)::before, .billing:not(.ready)::before { transition: none; }
+  .tabs::before {
+    border-radius: 41px;
     background-image: linear-gradient(0deg, rgba(3,173,226,0.2) 10.937%, rgba(0,104,215,0.2) 100%), linear-gradient(90deg, #03ade2, #03ade2);
+  }
+  .billing::before { border-radius: 8px; background: #fff; box-shadow: 2px 2px 2px rgba(124,124,124,0.25); }
+
+  /* Crossfade between per-tab variants that share a grid cell (title, billing toggle / subtitle) */
+  .swap { display: grid; justify-items: center; align-items: center; }
+  .swap > * { grid-area: 1 / 1; transition: opacity .25s ease, visibility .25s; }
+  .swap > .is-off { opacity: 0; visibility: hidden; }
+
+  /* New tab's cards ease in */
+  @keyframes panel-in { from { opacity: 0; transform: translateY(8px); } }
+  .cards:not([hidden]) { animation: panel-in .3s ease-out; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tabs::before, .billing::before, .swap > *, .tab, .billing button { transition: none; }
+    .cards:not([hidden]) { animation: none; }
   }
   .subtitle {
     display: flex;
@@ -411,9 +445,9 @@
     color: #212529;
     cursor: pointer;
     white-space: nowrap;
-    transition: background-color .2s, filter .2s;
+    transition: color .3s;
   }
-  .billing button.is-active { background: #fff; color: #15171f; box-shadow: 2px 2px 2px rgba(124,124,124,0.25); }
+  .billing button.is-active { color: #15171f; }
   .billing .save {
     background: #f23b77;
     border: 1px solid rgba(255,255,255,0.6);
@@ -506,13 +540,11 @@
     left: var(--tip-left, -150px); /* set from JS so the bubble stays on screen */
     width: 324px;
     max-width: calc(100vw - 32px);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-4px);
-    transition: opacity .15s, transform .15s, visibility .15s;
+    display: none; /* fully out of layout while hidden, so it can't widen the page */
   }
+  @keyframes tip-in { from { opacity: 0; transform: translateY(-4px); } }
   .tools-tip::after { bottom: 100%; left: calc(var(--arrow-x, 158px) - 8px); border-bottom: 8px solid rgba(9,22,26,0.95); }
-  .tip-wrap:hover .tools-tip, .tip-wrap:focus-within .tools-tip, .tip-wrap.open .tools-tip { opacity: 1; visibility: visible; transform: none; }
+  .tip-wrap:hover .tools-tip, .tip-wrap:focus-within .tools-tip, .tip-wrap.open .tools-tip { display: block; animation: tip-in .15s ease-out; }
   .tools-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 14px; line-height: 22px; }
   .tools-row b { font-weight: 700; font-size: 18px; }
   .packs { display: flex; flex-direction: column; }
@@ -568,10 +600,8 @@
   }
   .show-more svg { transition: transform .2s; }
   .show-more[aria-expanded="true"] svg { transform: rotate(180deg); }
+  /* same right-hand position as the Subscription badge; orange instead of red */
   .cards[data-panel="payg"] .badge {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
     border: 0;
     background-image: linear-gradient(88deg, #ffb802 0%, #ffa51c 33%, #ff8800 100%);
   }
@@ -713,8 +743,7 @@
     .tabs { padding: 6px; }
     .tab { font-size: 18px; line-height: 24px; padding: 12px 8px; }
     .subtitle { display: block; font-size: 14px; line-height: 20px; }
-    .subtitle img { display: inline-block; vertical-align: -3px; width: 15px; height: 15px; }
-    .subtitle .tip-wrap { margin-left: 6px; }
+    .subtitle img { display: inline-block; vertical-align: -3px; margin-left: 2px; width: 15px; height: 15px; }
     .api-link.ghost { display: none; }
     .per-mo { font-size: 18px; }
     .api-link { font-size: 16px; }
@@ -758,20 +787,20 @@
 </header>
 <main class="page">
   <section class="hero">
-    <h1 id="page-title">Choose the Right Plan for you</h1>
+    <h1 class="swap"><span data-panel="sub">Choose the Right Plan for you</span><span data-panel="payg" class="is-off" aria-hidden="true">Choose Your Perfect Pack</span></h1>
     <div class="tab-wrap">
       <div class="tabs" role="tablist">
-        <button class="tab is-active" role="tab" aria-selected="true" data-tab="sub" data-title="Choose the Right Plan for you" data-currency="USD">Subscription</button>
-        <button class="tab" role="tab" aria-selected="false" data-tab="payg" data-title="Choose Your Perfect Pack" data-currency="TWD">Pay As You Go</button>
+        <button class="tab is-active" role="tab" aria-selected="true" data-tab="sub" data-currency="USD">Subscription</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="payg" data-currency="TWD">Pay As You Go</button>
       </div>
+      <!-- both rows share one grid cell so switching tabs never changes the height -->
+      <div class="tab-sub swap">
       <div class="billing" role="radiogroup" aria-label="Billing period" data-panel="sub">
         <button type="button" role="radio" aria-checked="false" data-billing="monthly">Monthly</button>
         <button type="button" role="radio" aria-checked="true" data-billing="yearly" class="is-active">Yearly <span class="save">Save <span data-save>60</span>%</span></button>
       </div>
-      <p class="subtitle" data-panel="payg" hidden>Pay-as-you-go credit pack could only be used in limited Generative-AI tools.<span class="tip-wrap">
-          <button class="tools-info" type="button" aria-label="Which tools need a subscription" aria-describedby="payg-tip"><img src="assets/icon-info.svg" alt="" width="17" height="17"></button>
-          <span class="tools-tip" id="payg-tip" role="tooltip"><b>Subscription is required for these tools:</b>Photo Enhancer, Object Removal, AI Replace, etc. See the complete list in the pricing table below.</span>
-        </span></p>
+      <p class="subtitle is-off" data-panel="payg" aria-hidden="true">Pay-as-you-go credit pack could only be used in limited Generative-AI tools. <img src="assets/icon-info.svg" alt="" width="17" height="17"></p>
+      </div>
     </div>
   </section>
 
@@ -1113,12 +1142,28 @@
   proSlider = createSlider(subPro.querySelector('.slider-block'), SUB.proStops, 0, renderSub);
   rerenders.push(renderSub);
 
+  /* ===== Sliding pill indicator for .tabs / .billing ===== */
+  function moveIndicator(group) {
+    const a = group.querySelector('.is-active');
+    if (!a || !a.offsetWidth) return;
+    group.style.setProperty('--ind-x', `${a.offsetLeft}px`);
+    group.style.setProperty('--ind-y', `${a.offsetTop}px`);
+    group.style.setProperty('--ind-w', `${a.offsetWidth}px`);
+    group.style.setProperty('--ind-h', `${a.offsetHeight}px`);
+    if (!group.classList.contains('ready')) requestAnimationFrame(() => group.classList.add('ready'));
+  }
+  const toggleGroups = [...document.querySelectorAll('.tabs, .billing')];
+  const ro = new ResizeObserver(entries => entries.forEach(e => moveIndicator(e.target)));
+  toggleGroups.forEach(g => { moveIndicator(g); ro.observe(g); });
+  document.fonts.ready.then(() => toggleGroups.forEach(moveIndicator));
+
   document.querySelectorAll('[data-billing]').forEach(btn => btn.addEventListener('click', () => {
     billing = btn.dataset.billing;
     document.querySelectorAll('[data-billing]').forEach(b => {
       b.classList.toggle('is-active', b === btn);
       b.setAttribute('aria-checked', b === btn);
     });
+    moveIndicator(btn.parentElement);
     renderSub();
   }));
 
@@ -1188,9 +1233,10 @@
     const tip = wrap.querySelector('.tools-tip');
     const icon = wrap.querySelector('button').getBoundingClientRect();
     const box = wrap.getBoundingClientRect();
-    const w = tip.offsetWidth;
+    const vw = document.documentElement.clientWidth;
+    const w = Math.min(324, vw - 32); // matches the CSS width / max-width
     const center = icon.left + icon.width / 2;
-    const left = Math.min(Math.max(center - w / 2, 16), document.documentElement.clientWidth - 16 - w);
+    const left = Math.min(Math.max(center - w / 2, 16), vw - 16 - w);
     tip.style.setProperty('--tip-left', `${left - box.left}px`);
     tip.style.setProperty('--arrow-x', `${center - left}px`);
   }
@@ -1260,8 +1306,16 @@
       t.classList.toggle('is-active', t === tab);
       t.setAttribute('aria-selected', t === tab);
     });
-    document.querySelectorAll('[data-panel]').forEach(p => { p.hidden = p.dataset.panel !== tab.dataset.tab; });
-    document.getElementById('page-title').textContent = tab.dataset.title;
+    moveIndicator(tab.parentElement);
+    document.querySelectorAll('[data-panel]').forEach(p => {
+      const off = p.dataset.panel !== tab.dataset.tab;
+      if (p.parentElement.classList.contains('swap')) {
+        p.classList.toggle('is-off', off);
+        p.setAttribute('aria-hidden', off);
+      } else {
+        p.hidden = off;
+      }
+    });
     if (!currencyPicked) setCurrency(tab.dataset.currency);
   }));
 </script>
