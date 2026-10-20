@@ -703,6 +703,129 @@
     .signup-btn .sm { display: inline; }
   }
 
+  /* ---------- Compare All Plans ---------- */
+  .compare { background: #f5f5f5; padding: 80px 32px 80px; }
+  .compare-inner { max-width: 1200px; margin: 0 auto; }
+  .compare h2 {
+    margin: 0 0 40px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 40px;
+    line-height: 40px;
+    letter-spacing: -0.5px;
+    text-align: center;
+    color: #212529;
+  }
+  /* Plan header row — sticks under the site header while the table scrolls (as in the Make prototype) */
+  .cmp-head {
+    position: sticky;
+    top: 64px;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    align-items: stretch; /* plan boxes share one height even when a subtitle wraps */
+    gap: 8px;
+    padding: 10px;
+    border-radius: 36px;
+    background: #fff;
+    box-shadow: 0 14px 10px rgba(0,0,0,0.15);
+  }
+  .cmp-head-label { align-self: center; padding-left: 28px; font-weight: 600; font-size: 20px; line-height: 28px; color: #000; }
+  .cmp-head-label.center { padding-left: 0; text-align: center; font-size: 18px; line-height: 26px; }
+  .cmp-plan {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 24px;
+    background: rgba(17,24,26,0.04);
+  }
+  .cmp-btn { margin-top: auto; }
+  .cmp-plan-name { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-weight: 600; font-size: 18px; line-height: 26px; color: #000; }
+  .cmp-plan-sub { margin-top: -6px; font-size: 16px; line-height: 24px; color: #212529; }
+  .cmp-plan-sub .sm { display: none; }
+  .mini-tag { flex: none; padding: 5px 8px 4px; border-radius: 100px; color: #fff; font-size: 12px; line-height: 1; font-weight: 700; }
+  .mini-tag.plus { background-image: linear-gradient(34deg, rgba(68,227,237,0.8) 2.43%, rgba(3,173,226,0.8) 67.21%), linear-gradient(#fff, #fff); }
+  .mini-tag.pro { padding: 5px 9px 4px; border-radius: 22px; font-weight: 900; background-image: linear-gradient(89.5deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%); }
+  .cmp-btn {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 32px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 26px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: filter .15s;
+  }
+  .cmp-btn:hover { filter: brightness(1.08); }
+  .cmp-btn.dark { background: rgba(9,22,26,0.95); }
+  .cmp-btn.brand { background: var(--brand); }
+  .cmp-btn.orange { background-image: linear-gradient(88.8deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%); }
+
+  .cmp-groups { display: flex; flex-direction: column; gap: 24px; margin-top: 24px; }
+  .cmp-group { padding: 14px 0; border-radius: 40px; background: #fff; overflow: clip; }
+  .cmp-group-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    height: 60px;
+    padding: 0 40px;
+    border: 0;
+    background: none;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 28px;
+    color: #000;
+    text-align: left;
+    cursor: pointer;
+  }
+  .cmp-group-title img { width: 28px; height: 28px; transform: scaleY(-1); transition: transform .25s ease; } /* up = expanded */
+  .cmp-group-title[aria-expanded="false"] img { transform: none; }
+  /* collapse animates the body height */
+  .cmp-body { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .3s ease; }
+  .cmp-body > div { overflow: hidden; min-height: 0; }
+  .cmp-group.is-collapsed .cmp-body { grid-template-rows: 0fr; }
+  .cmp-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; min-height: 60px; }
+  .cmp-row > * { padding: 14px 20px; font-size: 16px; line-height: 24px; color: #15171f; text-align: center; }
+  .cmp-row .tool { padding-left: 40px; font-weight: 600; text-align: left; }
+  .cmp-cell { display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .cmp-cell img.mark { width: 20px; height: 20px; }
+  .cmp-cell img.info { width: 14px; height: 14px; }
+  .cmp-row .cost-sm { display: none; }
+
+  @media (prefers-reduced-motion: reduce) { .cmp-body, .cmp-group-title img { transition: none; } }
+
+  /* Mobile table (Figma 2080-30953): 3 plan columns; each tool takes two lines */
+  @media (max-width: 900px) {
+    .compare { padding: 40px 20px 48px; }
+    .compare h2 { margin-bottom: 20px; font-size: 28px; line-height: 40px; }
+    .cmp-head { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; border-radius: 20px; }
+    .cmp-head-label { display: none; }
+    .cmp-plan { padding: 8px; border-radius: 12px; justify-content: space-between; }
+    .cmp-plan-name { font-size: 16px; line-height: 24px; gap: 3px; }
+    .cmp-plan-sub { margin-top: -6px; font-size: 14px; line-height: 20px; }
+    .cmp-plan-sub .lg { display: none; }
+    .cmp-plan-sub .sm { display: inline; }
+    .mini-tag { padding: 4px 6px; font-size: 8.5px; font-weight: 800; }
+    .mini-tag.pro { padding: 4px 6px; font-weight: 800; }
+    .cmp-btn { height: 32px; font-size: 14px; line-height: 20px; }
+    .cmp-groups { gap: 20px; margin-top: 20px; }
+    .cmp-group { padding: 4px 0 16px; border-radius: 20px; }
+    .cmp-group-title { padding: 0 16px; font-size: 18px; line-height: 26px; }
+    .cmp-group-title img { width: 24px; height: 24px; }
+    .cmp-row { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "tool tool cost" "c1 c2 c3"; padding: 0 4px; }
+    .cmp-row > * { padding: 8px 4px 16px; font-size: 14px; line-height: 20px; }
+    .cmp-row .tool { grid-area: tool; padding: 8px 12px 6px; }
+    .cmp-row .cost { grid-area: cost; padding: 8px 12px 6px; text-align: right; justify-content: flex-end; }
+    .cmp-row .c1 { grid-area: c1; } .cmp-row .c2 { grid-area: c2; } .cmp-row .c3 { grid-area: c3; }
+  }
+
   /* ---------- Responsive ---------- */
   /* Tablet (e.g. iPad mini landscape ~1133px): same layout, lighter density */
   @media (max-width: 1280px) {
@@ -1003,6 +1126,33 @@
     </div>
   </section>
 </main>
+
+<!-- ===== Compare All Plans (desktop Figma 2304-16868, mobile 2080-30953) ===== -->
+<section class="compare" aria-labelledby="compare-title">
+  <div class="compare-inner">
+    <h2 id="compare-title">Compare All Plans</h2>
+    <div class="cmp-head">
+      <div class="cmp-head-label">Tools</div>
+      <div class="cmp-head-label center">Credit Cost</div>
+      <div class="cmp-plan">
+        <div class="cmp-plan-name">Free</div>
+        <div class="cmp-plan-sub"><span class="lg">5 free credits upon sign-up</span><span class="sm">Sign up for 5 credits</span></div>
+        <a class="cmp-btn dark" href="#">Sign Up</a>
+      </div>
+      <div class="cmp-plan">
+        <div class="cmp-plan-name">Plus <span class="mini-tag plus">PLUS</span></div>
+        <div class="cmp-plan-sub"><span class="lg">100 credits/mo</span><span class="sm">100 credits / month</span></div>
+        <a class="cmp-btn brand" href="#">Subscribe</a>
+      </div>
+      <div class="cmp-plan">
+        <div class="cmp-plan-name">Pro <span class="mini-tag pro">PRO</span></div>
+        <div class="cmp-plan-sub"><span class="lg">300 credits/mo</span><span class="sm">300 credits / month</span></div>
+        <a class="cmp-btn orange" href="#">Subscribe</a>
+      </div>
+    </div>
+    <div class="cmp-groups"></div>
+  </div>
+</section>
 
 <template id="slider-tpl">
   <div class="slider-top">
@@ -1352,6 +1502,83 @@
   document.addEventListener('click', e => { if (!e.target.closest('.currency-wrap')) openMenu(false); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && !curMenu.hidden) { openMenu(false); curBtn.focus(); } });
   setCurrency('USD');
+
+  /* ===== Compare All Plans data (Figma 2304-16868) =====
+     cells: [credit cost, Free, Plus, Pro]; "✓" = included, "–" = not included, "…ⓘ" = value with info icon */
+  const COMPARE = [
+    { title: 'AI Photo Editing', rows: [
+      ['Photo Enhancer', '- -', '3 / day', '5 / day', '✓'],
+      ['AI Colorize', '- -', '3 / day', '✓', '✓'],
+      ['Color Correction', '- -', '3 / day', '✓', '✓'],
+      ['AI Lighting', '- -', '3 / day', '✓', '✓'],
+      ['AI Image Extender', '- -', '1 / day', '100 / day ⓘ', '200 / day ⓘ'],
+      ['AI Replace', '- -', '3 / day', '100 / day ⓘ', '200 / day ⓘ'],
+      ['Object Removal (Standard)', '- -', '3 / day', '✓', '✓'],
+      ['Object Removal (Pro)', '- -', '–', '–', '200 / day ⓘ'],
+      ['Remove Background, Blur Background, Change Background', '- -', '3 / day', '5 / day', '✓'],
+      ['Crop', '- -', '✓', '✓', '✓'],
+      ['Flip & Rotate', '- -', '✓', '✓', '✓'],
+      ['Resize', '- -', '✓', '✓', '✓'],
+      ['Adjust Light & Color', '- -', '✓', '✓', '✓'],
+      ['AI Image Generator', '2 credits', '✓', '✓', '✓'],
+    ]},
+    { title: 'AI Portrait', rows: [
+      ['AI Makeup Virtual Try On', '- -', '–', '✓', '✓'],
+      ['AI Reshape', '- -', '–', '✓', '✓'],
+      ['AI Retouch', '- -', '–', '–', '✓'],
+      ['Hair Color', '- -', '1 / day', '✓', '✓'],
+      ['AI Portrait Generator', '2 credits', '✓', '✓', '✓'],
+      ['AI Headshot Generator', '20 images = 30 credits', '✓', '✓', '✓'],
+      ['AI Studio Generator', '10 images = 10 credits', '✓', '✓', '✓'],
+      ['AI Avatar Generator', '50 images = 20 credits', '✓', '✓', '✓'],
+      ['AI Face Swap', '1 - 2 credits', '✓', '✓', '✓'],
+      ['AI Hairstyle Generator', '2 credits', '✓', '✓', '✓'],
+      ['AI Bang Generator', '2 credits', '✓', '✓', '✓'],
+      ['AI Hair Volume', '2 credits', '✓', '✓', '✓'],
+      ['AI Hair Extension', '2 credits', '✓', '✓', '✓'],
+      ['AI Hair Wavy', '2 credits', '✓', '✓', '✓'],
+      ['Beard Style', '2 credits', '✓', '✓', '✓'],
+      ['AI Makeup Transfer', '2 credits', '✓', '✓', '✓'],
+      ['AI Clothes', '2 credits', '✓', '✓', '✓'],
+    ]},
+    { title: 'AI Video Editing', rows: [
+      ['Video Enhancer', '1 credit / 2 sec', '✓', '✓', '✓'],
+      ['Video Face Swap', '1 credit / 4-5 sec', '✓', '✓', '✓'],
+      ['Video Style Transfer', '4 credits / 1 sec', '✓', '✓', '✓'],
+      ['Image to Video (Standard)', '2 credits / 1 sec', '✓', '✓', '✓'],
+      ['Image to Video (Adv)', '5 credits / 1 sec', '✓', '✓', '✓'],
+      ['Image to Video (Pro)', '6 credits / 1 sec', '✓', '✓', '✓'],
+    ]},
+    { title: 'Others', rows: [
+      ['Batch Enhance', '- -', '–', '1 / day', '✓'],
+      ['Batch Image Converter', '- -', '–', '✓', '✓'],
+      ['Commercial Use', '- -', '–', '–', '✓'],
+    ]},
+  ];
+  const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  function cmpCell(v, cls) {
+    let inner;
+    if (v === '✓') inner = '<img class="mark" src="assets/table-tick.svg" alt="Included" width="20" height="20">';
+    else if (v === '–') inner = '<img class="mark" src="assets/table-minus.svg" alt="Not included" width="20" height="20">';
+    else if (v.endsWith(' ⓘ')) inner = `${esc(v.slice(0, -2))}<img class="info" src="assets/ic-info.svg" alt="" width="14" height="14">`;
+    else inner = esc(v);
+    return `<div class="cmp-cell ${cls}">${inner}</div>`;
+  }
+  document.querySelector('.cmp-groups').innerHTML = COMPARE.map((g, gi) => `
+    <div class="cmp-group">
+      <button class="cmp-group-title" type="button" aria-expanded="true" aria-controls="cmp-body-${gi}">${esc(g.title)}<img src="assets/chevron-section.svg" alt="" width="28" height="28"></button>
+      <div class="cmp-body" id="cmp-body-${gi}"><div>
+        ${g.rows.map(([tool, cost, a, b, c]) => `
+        <div class="cmp-row">
+          <div class="tool">${esc(tool)}</div>${cmpCell(cost, 'cost')}${cmpCell(a, 'c1')}${cmpCell(b, 'c2')}${cmpCell(c, 'c3')}
+        </div>`).join('')}
+      </div></div>
+    </div>`).join('');
+  document.querySelectorAll('.cmp-group-title').forEach(btn => btn.addEventListener('click', () => {
+    const open = btn.getAttribute('aria-expanded') !== 'true';
+    btn.setAttribute('aria-expanded', open);
+    btn.closest('.cmp-group').classList.toggle('is-collapsed', !open);
+  }));
 
   /* ===== Tabs ===== */
   document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
