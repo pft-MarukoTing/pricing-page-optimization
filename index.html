@@ -1455,6 +1455,13 @@
         setTimeout(() => { track.classList.add('hinting'); requestAnimationFrame(coverDots); }, 400);
       }
     }, { threshold: 0.6 }).observe(track);
+    // Replays the hint from the start (used when switching A/B versions)
+    track.addEventListener('replayhint', () => {
+      track.classList.remove('hinting');
+      void track.offsetWidth; // restart the CSS animations
+      track.classList.add('hinting');
+      requestAnimationFrame(coverDots);
+    });
     dots.innerHTML = stops.map((_, i) => `<i style="left:${posFor(i)}"></i>`).join('');
 
     function set(i) {
@@ -1864,7 +1871,10 @@
       btns.forEach(b => b.setAttribute('aria-pressed', b.dataset.ab === v));
       const url = new URL(location.href); url.searchParams.set('ab', v); history.replaceState(null, '', url);
     };
-    btns.forEach(b => b.addEventListener('click', () => apply(b.dataset.ab)));
+    btns.forEach(b => b.addEventListener('click', () => {
+      apply(b.dataset.ab);
+      document.querySelectorAll('.track').forEach(t => t.dispatchEvent(new Event('replayhint')));
+    }));
     apply(new URLSearchParams(location.search).get('ab') === 'b' ? 'b' : 'a');
   })();
 </script>
