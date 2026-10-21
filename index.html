@@ -717,10 +717,28 @@
     color: #212529;
   }
   /* Plan header row — sticks under the site header while the table scrolls (as in the Make prototype) */
-  .cmp-head {
+  /* Sticky layer (Figma 2080-42390 "Gradient Mask"): the plan header sits 19px under the site header.
+     Behind it, a full-width #f5f5f5 → transparent gradient runs from the top of that gap to 19px below
+     the header, so rows scrolling up are almost hidden in the gap and fade in just under the header. */
+  .cmp-sticky {
+    --side: 32px; /* = .compare side padding, so the mask spans the full width */
+    --gap: 19px;
     position: sticky;
-    top: 64px;
+    top: 64px; /* right under the site header; the top padding is the gap */
     z-index: 10;
+    isolation: isolate;
+    margin: calc(-1 * var(--gap)) calc(-1 * var(--side)) 0;
+    padding: var(--gap) var(--side) 0;
+  }
+  .cmp-sticky::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0 0 calc(-1 * var(--gap)) 0;
+    background: linear-gradient(#f5f5f5, rgba(245,245,245,0));
+    pointer-events: none;
+  }
+  .cmp-head {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     align-items: stretch; /* plan boxes share one height even when a subtitle wraps */
@@ -730,7 +748,7 @@
     background: #fff;
     box-shadow: 0 14px 10px rgba(0,0,0,0.15);
   }
-  .cmp-head-label { align-self: center; padding-left: 28px; font-weight: 600; font-size: 20px; line-height: 28px; color: #000; }
+  .cmp-head-label { align-self: center; padding-left: 28px; font-weight: 400; font-size: 20px; line-height: 28px; color: #000; }
   .cmp-head-label.center { padding-left: 0; text-align: center; font-size: 18px; line-height: 26px; }
   .cmp-plan {
     display: flex;
@@ -743,7 +761,6 @@
   .cmp-btn { margin-top: auto; }
   .cmp-plan-name { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-weight: 600; font-size: 18px; line-height: 26px; color: #000; }
   .cmp-plan-sub { margin-top: -6px; font-size: 16px; line-height: 24px; color: #212529; }
-  .cmp-plan-sub .sm { display: none; }
   .mini-tag { flex: none; padding: 5px 8px 4px; border-radius: 100px; color: #fff; font-size: 12px; line-height: 1; font-weight: 700; }
   .mini-tag.plus { background-image: linear-gradient(34deg, rgba(68,227,237,0.8) 2.43%, rgba(3,173,226,0.8) 67.21%), linear-gradient(#fff, #fff); }
   .mini-tag.pro { padding: 5px 9px 4px; border-radius: 22px; font-weight: 900; background-image: linear-gradient(89.5deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%); }
@@ -806,14 +823,13 @@
   /* Mobile table (Figma 2080-30953): 3 plan columns; each tool takes two lines */
   @media (max-width: 900px) {
     .compare { padding: 40px 20px 48px; }
+    .cmp-sticky { --side: 20px; }
     .compare h2 { margin-bottom: 20px; font-size: 28px; line-height: 40px; }
     .cmp-head { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; border-radius: 20px; }
     .cmp-head-label { display: none; }
     .cmp-plan { padding: 8px; border-radius: 12px; justify-content: space-between; }
     .cmp-plan-name { font-size: 16px; line-height: 24px; gap: 3px; }
     .cmp-plan-sub { margin-top: -6px; font-size: 14px; line-height: 20px; }
-    .cmp-plan-sub .lg { display: none; }
-    .cmp-plan-sub .sm { display: inline; }
     .mini-tag { padding: 4px 6px; font-size: 8.5px; font-weight: 800; }
     .mini-tag.pro { padding: 4px 6px; font-weight: 800; }
     .cmp-btn { height: 32px; font-size: 14px; line-height: 20px; }
@@ -827,7 +843,6 @@
     .cmp-row .top { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px; }
     .cmp-row .tool { flex: 0 0 auto; max-width: 60%; padding: 8px 0 6px; }
     .cmp-row .cost { flex: 1 1 0; min-width: 0; padding: 8px 0 6px; text-align: right; justify-content: flex-end; }
-    .cmp-row.dup-sm { display: none; } /* "Free Credits" repeats the plan header subtitles */
   }
 
   /* ---------- Responsive ---------- */
@@ -1135,24 +1150,26 @@
 <section class="compare" aria-labelledby="compare-title">
   <div class="compare-inner">
     <h2 id="compare-title">Compare All Plans</h2>
+    <div class="cmp-sticky">
     <div class="cmp-head">
-      <div class="cmp-head-label">Plan</div>
-      <div class="cmp-head-label center">Credit Usage</div>
+      <div class="cmp-head-label">Tools</div>
+      <div class="cmp-head-label center">Credit Cost</div>
       <div class="cmp-plan">
         <div class="cmp-plan-name">Free</div>
-        <div class="cmp-plan-sub"><span class="lg">5 free credits upon sign-up</span><span class="sm">Sign up for 5 credits</span></div>
+        <div class="cmp-plan-sub">5 free credits upon sign-up</div>
         <a class="cmp-btn dark" href="#">Sign Up</a>
       </div>
       <div class="cmp-plan">
         <div class="cmp-plan-name">Plus <span class="mini-tag plus">PLUS</span></div>
-        <div class="cmp-plan-sub"><span class="lg">100 credits/mo</span><span class="sm">100 credits / month</span></div>
+        <div class="cmp-plan-sub">100 credits per month</div>
         <a class="cmp-btn brand" href="#">Subscribe</a>
       </div>
       <div class="cmp-plan">
         <div class="cmp-plan-name">Pro <span class="mini-tag pro">PRO</span></div>
-        <div class="cmp-plan-sub"><span class="lg">300 credits/mo</span><span class="sm">300 credits / month</span></div>
+        <div class="cmp-plan-sub">300 credits per month</div>
         <a class="cmp-btn orange" href="#">Subscribe</a>
       </div>
+    </div>
     </div>
     <div class="cmp-groups"></div>
     <p class="cmp-note">Users on the Plus/Pro plan can use subscription features without credit consumption and download without watermark.</p>
@@ -1515,7 +1532,6 @@
      the screenshots cut off the rows between AI Hair Color and AI Hairstyle Generator. */
   const COMPARE = [
     { title: null, rows: [
-      ['Free Credits', '', 'Sign up for 5 credits', '100 credits / month', '300 credits / month'],
       ['Watermark free', '', '–', '✓', '✓'],
     ]},
     { title: 'AI Photo Editing', rows: [
@@ -1591,7 +1607,7 @@
       ${g.title ? `<button class="cmp-group-title" type="button" aria-expanded="true" aria-controls="cmp-body-${gi}">${esc(g.title)}<img src="assets/chevron-section.svg" alt="" width="28" height="28"></button>` : ''}
       <div class="cmp-body" id="cmp-body-${gi}"><div>
         ${g.rows.map(([tool, cost, a, b, c]) => `
-        <div class="cmp-row${tool === 'Free Credits' ? ' dup-sm' : ''}">
+        <div class="cmp-row">
           <div class="top"><div class="tool">${esc(tool)}</div>${cmpCell(cost, 'cost')}</div>${cmpCell(a, 'c1')}${cmpCell(b, 'c2')}${cmpCell(c, 'c3')}
         </div>`).join('')}
       </div></div>
@@ -1608,8 +1624,8 @@
     const group = document.getElementById('cmp-ai-agent');
     const title = group.querySelector('.cmp-group-title');
     if (title.getAttribute('aria-expanded') !== 'true') title.click();
-    const cmpHead = document.querySelector('.cmp-head');
-    const offset = parseFloat(getComputedStyle(cmpHead).top) + cmpHead.offsetHeight + 16;
+    const sticky = document.querySelector('.cmp-sticky');
+    const offset = parseFloat(getComputedStyle(sticky).top) + sticky.offsetHeight + 16;
     const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({ top: group.getBoundingClientRect().top + window.scrollY - offset, behavior: smooth ? 'smooth' : 'auto' });
   }));
