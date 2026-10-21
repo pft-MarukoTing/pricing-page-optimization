@@ -1528,8 +1528,7 @@
   /* ===== Compare All Plans data (content from the live pricing page, 2026-10-20) =====
      cells: [credit usage, Free, Plus, Pro]; "✓" = included, "–" = not included.
      Notes: the live page shows "From null credits / null secs" for Text to Video and Video Generation
-     (looks like a data bug) — shown as "- -" here. "AI Portrait Generator" is assumed from the Figma table:
-     the screenshots cut off the rows between AI Hair Color and AI Hairstyle Generator. */
+     (looks like a data bug) — shown as "- -" here. */
   const COMPARE = [
     { title: null, rows: [
       ['Watermark free', '', '–', '✓', '✓'],
@@ -1559,7 +1558,6 @@
       ['AI Face Retouch', '- -', '–', '–', '✓'],
       ['AI Body Reshape', '- -', '–', 'Limited', '✓'],
       ['AI Hair Color', '- -', '1 use / day', '✓', '✓'],
-      ['AI Portrait Generator', '2 credits', '✓', '✓', '✓'], // assumed, see note above
       ['AI Hairstyle Generator', '2 credits', '✓', '✓', '✓'],
       ['AI Face Swap', '1 - 2 credits', '✓', '✓', '✓'],
       ['AI Clothes', '2 credits', '✓', '✓', '✓'],
