@@ -7,21 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;700;800;900&family=Wix+Madefor+Display:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/design-tokens.css">
 <style>
+  /* Design tokens come from assets/design-tokens.css (typography preset, amber-updated).
+     Only page-specific values and short aliases are defined here. */
   :root {
-    --text-strong: rgba(9, 22, 26, 0.95);
-    --text-weak: rgba(17, 24, 26, 0.65);
-    --text-weaker: rgba(17, 24, 26, 0.45);
-    --text-info: #1a74a8;
-    --brand: #03ade2;
-    --pro: #00789e;
-    --fill-disabled: rgba(17, 24, 26, 0.2);
-    --stroke-strong: rgba(17, 24, 26, 0.45);
-    --stroke-weak: rgba(17, 24, 26, 0.2); /* assumed: Stroke/Weak isn't in the Figma nodes read so far */
-    --stroke-focus: rgba(3, 173, 226, 0.2);
-    --error: #de0000;
-    --font-display: "Wix Madefor Display", system-ui, sans-serif;
-    --font-body: "Roboto", system-ui, sans-serif;
+    --brand: var(--fill-brand-strong);
+    --text-info: var(--text-information);
+    --error: var(--text-error);
+    --pro: #00789e; /* Pro price color from the Figma card, not in the token set */
+    --font-display: "Wix Madefor Display", var(--font-family-body); /* page/plan titles per Figma */
+    --font-body: var(--font-family-body);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
@@ -29,7 +25,7 @@
   html, body { overflow-x: hidden; }
   @supports (overflow: clip) { html, body { overflow-x: clip; } }
   body {
-    background: #fff;
+    background: var(--background-base);
     color: var(--text-strong);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
@@ -108,7 +104,7 @@
   .tabs:not(.ready)::before, .billing:not(.ready)::before { transition: none; }
   .tabs::before {
     border-radius: 41px;
-    background-image: linear-gradient(0deg, rgba(3,173,226,0.2) 10.937%, rgba(0,104,215,0.2) 100%), linear-gradient(90deg, #03ade2, #03ade2);
+    background-image: linear-gradient(0deg, var(--stroke-brand-weak) 10.937%, rgba(0,104,215,0.2) 100%), linear-gradient(90deg, var(--fill-brand-strong), var(--fill-brand-strong));
   }
   .billing::before { border-radius: 8px; background: #fff; box-shadow: 2px 2px 2px rgba(124,124,124,0.25); }
 
@@ -136,7 +132,9 @@
     color: var(--text-strong);
     text-align: center;
   }
-  .subtitle img { width: 16.815px; height: 16.815px; transform: scaleY(-1); flex: none; }
+  .subtitle img { display: block; width: 16.815px; height: 16.815px; transform: scaleY(-1); flex: none; }
+  .subtitle-info { display: inline-flex; padding: 3px; margin: -3px; border-radius: 50%; flex: none; transition: background-color .15s; }
+  .subtitle-info:hover { background: var(--fill-hover); }
 
   /* ---------- Toolbar ---------- */
   .plans {
@@ -158,7 +156,9 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 0 4px;
+    padding: 0 12px;
+    margin: 0 -12px; /* hover pill extends past the text without shifting the layout */
+    border-radius: 32px;
     color: var(--brand);
     font-weight: 600;
     font-size: 18px;
@@ -167,6 +167,7 @@
     white-space: nowrap;
   }
   .api-link img { width: 20px; height: 20px; transition: transform .2s; }
+  .api-link:not(.ghost):hover { background: var(--fill-hover); }
   .api-link:hover img { transform: translateX(3px); }
   .api-link.ghost { visibility: hidden; }
   .currency {
@@ -213,7 +214,8 @@
     color: #212529;
     cursor: pointer;
   }
-  .currency-menu li:hover, .currency-menu li[aria-selected="true"] { background: #e6f6fc; }
+  .currency-menu li[aria-selected="true"] { background: #e6f6fc; }
+  .currency-menu li:hover { background: var(--fill-hover); }
   .currency span { width: 55px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
   .currency .sep { width: 1px; height: 16px; background: #cacce0; }
   .currency img.chev { width: 7px; height: 16px; }
@@ -320,7 +322,7 @@
     border: 1px solid var(--stroke-strong);
     color: var(--text-strong);
   }
-  .btn-outline:hover { background: rgba(17,24,26,0.04); }
+  .btn-outline:hover { background: var(--fill-hover); }
   .btn-primary { background: var(--brand); color: #fff; }
   .btn-pro { background-image: linear-gradient(88.46deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%); color: #fff; }
   .btn-primary:hover, .btn-pro:hover { filter: brightness(1.05); }
@@ -423,8 +425,8 @@
     top: 2px;
     left: calc(50% + 111.83px);
     transform: translateX(-50%);
-    background: rgba(222,0,0,0.8);
-    border: 1px solid rgba(255,255,255,0.6);
+    background: var(--icon-error);
+    border: 1px solid var(--stroke-inverse-strong);
     border-radius: 32px;
     padding: 4px 12px;
     color: #fff;
@@ -466,8 +468,8 @@
   }
   .billing button.is-active { color: #15171f; }
   .billing .save {
-    background: #f23b77;
-    border: 1px solid rgba(255,255,255,0.6);
+    background: var(--fill-badge);
+    border: 1px solid var(--stroke-inverse-strong);
     color: #fff;
     border-radius: 32px;
     padding: 2px 6px;
@@ -488,7 +490,7 @@
     line-height: 1;
     opacity: 0.8;
   }
-  .tier-badge.plus { background-image: linear-gradient(31deg, #44e3ed 2.43%, #03ade2 67.21%); }
+  .tier-badge.plus { background-image: linear-gradient(31deg, #44e3ed 2.43%, var(--fill-brand-strong) 67.21%); }
   /* Figma 2347-38454 (premium_icon / PRO) */
   .tier-badge.pro {
     padding: 2.5px 12px 1.5px;
@@ -519,15 +521,15 @@
   .agent-name { flex: 1; min-width: 0; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: 14px; line-height: 20px; color: var(--text-strong); white-space: nowrap; }
   .agent-name .info { display: block; width: 12px; height: 12px; }
   .info-btn { display: inline-flex; padding: 4px; margin: -4px; border: 0; background: none; border-radius: 50%; cursor: pointer; }
-  .info-btn:hover, .info-btn[aria-expanded="true"] { background: rgba(17,24,26,0.06); }
+  .info-btn:hover, .info-btn[aria-expanded="true"] { background: var(--fill-hover); }
   /* Tooltip — YCO web components "Tooltip / Large" (Figma 3550-142326) */
   .agent-tip, .tools-tip {
     position: absolute;
     z-index: 5;
     padding: 8px 12px;
     border-radius: 8px;
-    background: rgba(9,22,26,0.95);
-    color: rgba(255,255,255,0.78);
+    background: var(--fill-strong);
+    color: var(--text-inverse-weak);
     box-shadow: 0 8px 24px -4px rgba(0,0,0,0.16);
     font-weight: 400;
     font-size: 14px;
@@ -546,13 +548,13 @@
   }
   /* above the row, arrow pointing down at the info icon (--arrow-x set from JS) */
   .agent-tip { left: 0; bottom: calc(100% + 8px); width: min(324px, 100%); }
-  .agent-tip::after { top: 100%; left: calc(var(--arrow-x, 24px) - 8px); border-top: 8px solid rgba(9,22,26,0.95); }
+  .agent-tip::after { top: 100%; left: calc(var(--arrow-x, 24px) - 8px); border-top: 8px solid var(--fill-strong); }
   .agent-link { display: inline-flex; align-items: center; height: 32px; padding: 0 12px 0 16px; border-radius: 32px; color: var(--brand); font-weight: 600; font-size: 14px; line-height: 20px; text-decoration: underline; text-underline-position: from-font; white-space: nowrap; }
   .agent-link img { width: 16px; height: 16px; margin-left: 4px; }
-  .agent-link:hover { background: rgba(3,173,226,0.06); }
+  .agent-link:hover { background: var(--fill-hover); }
   .cards[data-panel="payg"] .card .valid { margin-top: auto; }
   /* ---------- Pay As You Go packs ---------- */
-  .tools-box { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 16px; background: rgba(3,173,226,0.05); }
+  .tools-box { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; border-radius: 16px; background: var(--fill-brand-weak); }
   .tools-head { display: flex; align-items: center; justify-content: space-between; font-weight: 600; font-size: 14px; line-height: 20px; }
   .tools-head b { font-weight: 600; }
   .tools-head img { display: block; width: 16px; height: 16px; transform: scaleY(-1); }
@@ -568,7 +570,7 @@
     display: none; /* fully out of layout while hidden, so it can't widen the page */
   }
   @keyframes tip-in { from { opacity: 0; transform: translateY(-4px); } }
-  .tools-tip::after { bottom: 100%; left: calc(var(--arrow-x, 158px) - 8px); border-bottom: 8px solid rgba(9,22,26,0.95); }
+  .tools-tip::after { bottom: 100%; left: calc(var(--arrow-x, 158px) - 8px); border-bottom: 8px solid var(--fill-strong); }
   .tip-wrap:hover .tools-tip, .tip-wrap:focus-within .tools-tip, .tip-wrap.open .tools-tip { display: block; animation: tip-in .15s ease-out; }
   .tools-row { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-size: 14px; line-height: 22px; }
   .tools-row b { font-weight: 700; font-size: 18px; }
@@ -583,7 +585,7 @@
     cursor: pointer;
     transition: background-color .15s;
   }
-  .pack-row:hover { background: rgba(3,173,226,0.04); }
+  .pack-row:hover { background: var(--fill-hover); }
   .card.pro .pack-row { min-height: 60px; }
   .card.pro .pack-row.is-selected { background: rgba(255,255,255,0.7); }
   .pack-row input { position: absolute; opacity: 0; pointer-events: none; }
@@ -647,7 +649,8 @@
   .hd-left { display: flex; align-items: center; gap: 12px; flex: none; }
   .hd-menu { display: none; width: 32px; height: 32px; }
   .brand { display: flex; align-items: center; text-decoration: none; }
-  .brand .logo-symbol { display: none; width: 32px; height: 32px; }
+  .brand { gap: 12px; }
+  .brand .logo-symbol { display: block; width: 40px; height: 40px; }
   /* Wordmark: 256×25 box, "Online Editor" sits on the YouCam baseline */
   .logo-full { position: relative; display: block; width: 256px; height: 25px; }
   .logo-full .wm-youcam { position: absolute; left: 1px; top: 0.5px; width: 115px; height: 24px; }
@@ -669,13 +672,32 @@
     flex: none;
   }
   .site-nav a img { width: 20px; height: 20px; margin-left: 4px; margin-right: -4px; }
-  .site-nav a:hover { background: rgba(17,24,26,0.05); }
-  .site-nav a.is-current { color: var(--brand); }
+  .site-nav a:hover { background: var(--fill-hover); }
+  .site-nav a .ext { margin-left: 6px; color: var(--text-weak); }
+  /* Outlined "Start Editing" (desktop only; the phone header uses the wand icon button) */
+  .start-btn {
+    height: 42px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 20px 0 16px;
+    border: 1px solid var(--stroke-strong);
+    border-radius: 32px;
+    color: var(--text-strong);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 26px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color .15s;
+  }
+  .start-btn img { width: 20px; height: 20px; }
+  .start-btn:hover { background: var(--fill-hover); }
   .header-right { display: flex; align-items: center; gap: 12px; flex: none; margin-left: auto; }
   .icon-btn { display: none; width: 40px; height: 40px; border-radius: 32px; padding: 8px; box-sizing: border-box; }
   .icon-btn img { display: block; width: 24px; height: 24px; }
   .crown-btn { background-image: linear-gradient(89.77deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%); }
-  .wand-btn { border: 1px solid rgba(17,24,26,0.2); padding: 7px; }
+  .wand-btn { border: 1px solid var(--stroke-strong); padding: 7px; }
   .signup-btn {
     height: 42px;
     display: inline-flex;
@@ -694,11 +716,13 @@
   .signup-btn:hover { filter: brightness(1.05); }
   .signup-btn .sm { display: none; }
 
-  /* Mobile header (Figma 2080-45957) — the hamburger is static for now */
-  @media (max-width: 1024px) {
+  /* Mobile header (Figma 2080-45957) — the hamburger is static for now.
+     Below 1101px the desktop nav no longer fits next to both buttons. */
+  @media (max-width: 1100px) {
     .site-header { padding: 0 16px; gap: 16px; }
     .hd-menu { display: block; }
-    .brand .logo-symbol { display: block; }
+    .brand .logo-symbol { display: block; width: 32px; height: 32px; }
+    .start-btn { display: none; }
     .logo-full, .site-nav { display: none; }
     .icon-btn { display: block; }
     .signup-btn { height: 40px; padding: 0 16px; font-size: 16px; line-height: 24px; }
@@ -759,13 +783,13 @@
     gap: 8px;
     padding: 12px 16px;
     border-radius: 24px;
-    background: rgba(17,24,26,0.04);
+    background: var(--fill-weak);
   }
   .cmp-btn { margin-top: auto; }
   .cmp-plan-name { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-weight: 600; font-size: 18px; line-height: 26px; color: #000; }
   .cmp-plan-sub { margin-top: -6px; font-size: 16px; line-height: 24px; color: #212529; }
   .mini-tag { flex: none; padding: 5px 8px 4px; border-radius: 100px; color: #fff; font-size: 12px; line-height: 1; font-weight: 700; }
-  .mini-tag.plus { background-image: linear-gradient(34deg, rgba(68,227,237,0.8) 2.43%, rgba(3,173,226,0.8) 67.21%), linear-gradient(#fff, #fff); }
+  .mini-tag.plus { background-image: linear-gradient(34deg, rgba(68,227,237,0.8) 2.43%, var(--stroke-brand-strong) 67.21%), linear-gradient(#fff, #fff); }
   .mini-tag.pro { padding: 5px 9px 4px; border-radius: 22px; font-weight: 900; background-image: linear-gradient(89.5deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%); }
   .cmp-btn {
     height: 40px;
@@ -782,7 +806,7 @@
     transition: filter .15s;
   }
   .cmp-btn:hover { filter: brightness(1.08); }
-  .cmp-btn.dark { background: rgba(9,22,26,0.95); }
+  .cmp-btn.dark { background: var(--fill-strong); }
   .cmp-btn.brand { background: var(--brand); }
   .cmp-btn.orange { background-image: linear-gradient(88.8deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%); }
 
@@ -888,8 +912,8 @@
     .features li img { width: 18px; height: 18px; }
     .badge { font-size: 16px; line-height: 24px; }
   }
-  /* Desktop header on smaller laptops / iPad landscape (mobile header takes over at 1024px) */
-  @media (min-width: 1025px) and (max-width: 1280px) {
+  /* Desktop header on smaller laptops (mobile header takes over at 1100px) */
+  @media (min-width: 1101px) and (max-width: 1280px) {
     .site-header { gap: 24px; padding: 0 24px; }
     .site-nav a { padding: 0 12px; font-size: 16px; line-height: 24px; }
     .site-nav a img { width: 18px; height: 18px; }
@@ -910,7 +934,8 @@
     .tabs { padding: 6px; }
     .tab { font-size: 18px; line-height: 24px; padding: 12px 8px; }
     .subtitle { display: block; font-size: 14px; line-height: 20px; }
-    .subtitle img { display: inline-block; vertical-align: -3px; margin-left: 2px; width: 15px; height: 15px; }
+    .subtitle img { width: 15px; height: 15px; }
+    .subtitle-info { vertical-align: -6px; margin-left: -1px; }
     .api-link.ghost { display: none; }
     .per-mo { font-size: 18px; }
     .api-link { font-size: 16px; }
@@ -929,7 +954,7 @@
 </head>
 <body>
 <header class="site-header">
-  <!-- Desktop: Figma 2304-17008 · Mobile: Figma 2080-45957 -->
+  <!-- Desktop: matches the live site header · Mobile: Figma 2080-45957 -->
   <div class="hd-left">
     <img class="hd-menu" src="assets/menu.svg" alt="" width="32" height="32">
     <a class="brand" href="#" aria-label="YouCam Online Editor">
@@ -943,13 +968,14 @@
   <nav class="site-nav" aria-label="Main">
     <a href="#">Product <img src="assets/nav-chevron.svg" alt="" width="20" height="20"></a>
     <a href="#">Use Case <img src="assets/nav-chevron.svg" alt="" width="20" height="20"></a>
-    <a href="#">API <img src="assets/nav-chevron.svg" alt="" width="20" height="20"></a>
-    <a href="#" class="is-current" aria-current="page">Pricing</a>
+    <a href="#" aria-current="page">Pricing</a>
+    <a href="https://yce.perfectcorp.com/ai-api" target="_blank" rel="noopener">API <svg class="ext" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 7.5 8.5M11.5 9.5v3a1 1 0 0 1-1 1h-7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   </nav>
   <div class="header-right">
     <a class="icon-btn crown-btn" href="#" aria-label="Pricing"><img src="assets/crown.svg" alt="" width="24" height="24"></a>
     <a class="icon-btn wand-btn" href="#" aria-label="Start editing"><img src="assets/magic-wand.svg" alt="" width="24" height="24"></a>
-    <a class="signup-btn" href="#"><span class="lg">Log In / Sign Up</span><span class="sm">Sign Up</span></a>
+    <a class="start-btn" href="#"><img src="assets/magic-wand.svg" alt="" width="20" height="20">Start Editing</a>
+    <a class="signup-btn" href="#"><span class="lg">Log in / Sign up</span><span class="sm">Sign Up</span></a>
   </div>
 </header>
 <main class="page">
@@ -966,7 +992,7 @@
         <button type="button" role="radio" aria-checked="false" data-billing="monthly">Monthly</button>
         <button type="button" role="radio" aria-checked="true" data-billing="yearly" class="is-active">Yearly <span class="save">Save <span data-save>60</span>%</span></button>
       </div>
-      <p class="subtitle is-off" data-panel="payg" aria-hidden="true">Pay-as-you-go credit pack could only be used in limited Generative-AI tools. <img src="assets/icon-info.svg" alt="" width="17" height="17"></p>
+      <p class="subtitle is-off" data-panel="payg" aria-hidden="true">Pay-as-you-go credit pack could only be used in limited Generative-AI tools. <a class="subtitle-info" href="#compare" aria-label="See which tools each plan includes"><img src="assets/icon-info.svg" alt="" width="17" height="17"></a></p>
       </div>
     </div>
   </section>
@@ -1150,7 +1176,7 @@
 </main>
 
 <!-- ===== Compare All Plans (desktop Figma 2304-16868, mobile 2080-30953) ===== -->
-<section class="compare" aria-labelledby="compare-title">
+<section class="compare" id="compare" aria-labelledby="compare-title">
   <div class="compare-inner">
     <h2 id="compare-title">Compare All Plans</h2>
     <div class="cmp-sticky">
@@ -1628,6 +1654,15 @@
     const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({ top: group.getBoundingClientRect().top + window.scrollY - offset, behavior: smooth ? 'smooth' : 'auto' });
   }));
+
+  /* Subtitle info icon → scroll to "Compare All Plans", clearing the sticky site header */
+  document.querySelector('.subtitle-info').addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.getElementById('compare');
+    const offset = document.querySelector('.site-header').offsetHeight;
+    const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: smooth ? 'smooth' : 'auto' });
+  });
 
   /* ===== Tabs ===== */
   document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
