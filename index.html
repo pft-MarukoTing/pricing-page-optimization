@@ -333,14 +333,26 @@
   .hl { color: var(--brand); }
 
   /* ---------- Credit slider ---------- */
-  .slider-block { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-  .slider-top { display: flex; flex-direction: column; gap: 6px; padding-bottom: 4px; }
-  .credit-amount { display: flex; align-items: center; gap: 8px; padding-bottom: 10px; }
+  /* Slider box (Figma 2347-38461) */
+  .slider-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    padding: 16px 16px 8px; /* slider → labels → credit count (Figma 2347-38461) */
+    border: 2px solid var(--stroke-brand-weak);
+    border-radius: 16px;
+    background: var(--fill-brand-weak);
+  }
+  .slider-top { display: flex; flex-direction: column; gap: 6px; padding-top: 6px; }
+  .credit-amount { display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .slider-block .credit-amount .row { flex: none; }
+  .slider-block .per-credit:empty { display: none; }
   .credit-amount > img { width: 20px; height: 20px; flex: none; }
   /* Per-credit price drops to its own line (right-aligned) when it doesn't fit beside the credit count */
   .credit-amount .row { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; row-gap: 0; }
   .credit { flex: none; display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
-  .credit .num { font-weight: 600; font-size: 20px; line-height: 28px; font-variant-numeric: tabular-nums; }
+  .credit .num { font-weight: 600; font-size: 24px; line-height: 28px; font-variant-numeric: tabular-nums; }
   .credit .unit { font-weight: 600; font-size: 16px; line-height: 24px; color: var(--text-weak); }
   .per-credit { margin-left: auto; display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
   .per-credit .val { font-weight: 600; font-size: 20px; line-height: 28px; font-variant-numeric: tabular-nums; }
@@ -357,7 +369,7 @@
     outline: none;
     --pos: 0px;
   }
-  .track .bar, .track .progress {
+  .track .bar, .track .progress, .track .hint-trail {
     position: absolute;
     top: 50%;
     height: 6px;
@@ -380,6 +392,7 @@
   .track:hover .handle, .track.dragging .handle { transform: scale(1.08); }
   .track:focus-visible .handle { border-radius: 50%; box-shadow: 0 0 0 3px rgba(3,173,226,.35); }
   /* Gray stop dots on the track; stops at or before the handle are hidden under the progress bar */
+  /* Stop dots: blue before the handle, gray (with a soft white ring) after it; none at the first stop */
   .track .dots i {
     position: absolute;
     top: 50%;
@@ -387,11 +400,77 @@
     height: 10px;
     margin: -5px 0 0 -5px;
     border-radius: 50%;
-    background: #b8babb;
-    transition: opacity .18s ease;
+    background: #b9b9b9;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.6);
+    transition: background-color .18s ease, box-shadow .18s ease, opacity .18s ease;
   }
-  .track .dots i.is-passed { opacity: 0; }
+  .track .dots i.is-passed { background: var(--fill-selected); box-shadow: none; }
+  .track .dots i.is-current, .track .dots i:first-child { opacity: 0; }
   .track .handle { z-index: 1; }
+  /* Swipe hint (like competitor sliders): a finger drags from the handle one stop to the right and back.
+     Plays twice the first time the slider scrolls into view; stops on any interaction. */
+  .swipe-hint {
+    position: absolute;
+    z-index: 2;
+    top: 12px; /* fingertip touches the handle */
+    left: var(--pos);
+    margin-left: -10.5px; /* fingertip sits at x≈37.5% of the icon */
+    width: 28px;
+    height: 28px;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* Finger swipes from the first stop (300) to the last (10,000), then fades out and returns unseen.
+     One round trip = one play; it plays 3 times, then disappears. */
+  .track.hinting .swipe-hint { animation: swipe-hint 2.4s ease-in-out 3; }
+  @keyframes swipe-hint {
+    0%   { opacity: 0; left: 8px; transform: scale(1); }
+    10%  { opacity: 1; left: 8px; transform: scale(0.92); }
+    60%  { opacity: 1; left: calc(100% - 8px); transform: scale(0.92); animation-timing-function: linear; }
+    70%  { opacity: 0; left: calc(100% - 8px); transform: scale(1); }
+    100% { opacity: 0; left: 8px; }
+  }
+  /* Credits tooltip above the handle (Figma 2359-38778, Type / Top centre), always visible and follows the handle */
+  .handle-tip {
+    position: absolute;
+    z-index: 3;
+    bottom: calc(100% + 6px);
+    left: var(--pos);
+    transform: translateX(-50%);
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--fill-inverse-strong);
+    color: var(--text-strong);
+    font-size: var(--font-size-tiny);
+    line-height: var(--line-height-tiny);
+    font-weight: var(--font-weight-strong);
+    white-space: nowrap;
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.16)); /* one shadow around bubble + arrow */
+    pointer-events: none;
+  }
+  .handle-tip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border: 6px solid transparent;
+    border-bottom: 0;
+    border-top-color: var(--fill-inverse-strong);
+  }
+  .track:not(.dragging) .handle-tip { transition: left .18s ease; }
+  /* Gradient trail that fills the track behind the finger during the swipe hint */
+  .track .hint-trail { left: 4px; width: 0; opacity: 0; background: linear-gradient(90deg, rgba(3,173,226,0) 0%, rgba(3,173,226,.25) 40%, var(--brand) 100%); }
+  .track.hinting .hint-trail { animation: hint-trail 2.4s ease-in-out 3; }
+  @keyframes hint-trail {
+    0%   { opacity: 0; width: 4px; }
+    10%  { opacity: 1; width: 4px; }
+    60%  { opacity: 1; width: calc(100% - 12px); animation-timing-function: linear; }
+    70%  { opacity: 0; width: calc(100% - 12px); }
+    100% { opacity: 0; width: 4px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .track.hinting .swipe-hint, .track.hinting .hint-trail { animation: none; } }
   .labels { display: flex; align-items: center; gap: 4px; font-size: 12px; line-height: 16px; color: var(--text-weaker); }
   .labels button {
     border: 0; background: none; padding: 0; cursor: pointer;
@@ -1207,21 +1286,24 @@
 
 <template id="slider-tpl">
   <div class="slider-top">
-    <div class="credit-amount">
-      <img src="assets/coin.svg" alt="">
-      <div class="row">
-        <div class="credit"><span class="num" data-bind="credits">500</span><span class="unit">credits</span></div>
-        <div class="per-credit"></div>
-      </div>
-    </div>
     <div class="track" role="slider" tabindex="0" aria-label="Credit amount" aria-valuemin="100" aria-valuemax="10000">
       <div class="bar"></div>
+      <div class="hint-trail"></div>
       <div class="progress"></div>
       <div class="dots" aria-hidden="true"></div>
+      <img class="swipe-hint" src="assets/finger-pointer.svg" alt="" width="28" height="28" draggable="false">
       <img class="handle" src="assets/handle.svg" alt="" width="26" height="26" draggable="false">
+      <span class="handle-tip" aria-hidden="true"></span>
     </div>
   </div>
   <div class="labels"></div>
+  <div class="credit-amount">
+    <img src="assets/coin.svg" alt="">
+    <div class="row">
+      <div class="credit"><span class="num" data-bind="credits">500</span><span class="unit">credits</span></div>
+      <div class="per-credit"></div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -1286,6 +1368,18 @@
     // Handle center sits on the tick centers: 8px from each edge, equal gaps.
     const posFor = i => `calc(8px + (100% - 16px) * ${i / (stops.length - 1)})`;
     const dots = block.querySelector('.dots');
+    track.style.setProperty('--steps', stops.length - 1);
+    // Swipe hint: play once when the slider first scrolls into view; cancel on interaction
+    const stopHint = () => track.classList.remove('hinting');
+    ['pointerdown', 'keydown'].forEach(ev => track.addEventListener(ev, stopHint));
+    track.querySelector('.swipe-hint').addEventListener('animationend', stopHint);
+    // plays on page load if the slider is on screen, otherwise the first time it scrolls into view
+    new IntersectionObserver((entries, io) => {
+      if (entries.some(e => e.isIntersecting)) {
+        io.disconnect();
+        setTimeout(() => track.classList.add('hinting'), 400);
+      }
+    }, { threshold: 0.6 }).observe(track);
     dots.innerHTML = stops.map((_, i) => `<i style="left:${posFor(i)}"></i>`).join('');
 
     function set(i) {
@@ -1294,7 +1388,8 @@
       track.setAttribute('aria-valuenow', stops[index]);
       track.setAttribute('aria-valuetext', `${fmtNum(stops[index])} credits`);
       [...labels.children].forEach((b, j) => b.classList.toggle('is-active', j === index));
-      [...dots.children].forEach((d, j) => d.classList.toggle('is-passed', j <= index));
+      [...dots.children].forEach((d, j) => { d.classList.toggle('is-passed', j < index); d.classList.toggle('is-current', j === index); });
+      track.querySelector('.handle-tip').textContent = `${fmtNum(stops[index])} credits`;
       creditsEl.textContent = fmtNum(stops[index]);
       onChange(index);
     }
