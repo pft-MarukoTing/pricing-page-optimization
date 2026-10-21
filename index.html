@@ -351,19 +351,7 @@
     background: var(--fill-brand-weak);
   }
   .slider-top { display: flex; flex-direction: column; gap: 6px; padding-top: 6px; }
-  .credit-amount { display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .slider-block .credit-amount .row { flex: none; }
-  .slider-block .per-credit:empty { display: none; }
-  .credit-amount > img { width: 20px; height: 20px; flex: none; }
   /* Per-credit price drops to its own line (right-aligned) when it doesn't fit beside the credit count */
-  .credit-amount .row { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; row-gap: 0; }
-  .credit { flex: none; display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
-  .credit .num { font-weight: 600; font-size: 24px; line-height: 28px; font-variant-numeric: tabular-nums; }
-  .credit .unit { font-weight: 600; font-size: 16px; line-height: 24px; color: var(--text-weak); }
-  .per-credit { margin-left: auto; display: flex; align-items: baseline; gap: 4px; white-space: nowrap; }
-  .per-credit .val { font-weight: 600; font-size: 20px; line-height: 28px; font-variant-numeric: tabular-nums; }
-  .per-credit .suffix { font-size: 14px; line-height: 20px; }
-  .card.pro .per-credit .now { color: var(--pro); }
   .og-per { padding: 0 2px; font-size: 14px; line-height: 20px; color: var(--text-weaker); }
 
   .track {
@@ -590,7 +578,6 @@
   .per-mo { font-size: 22px; line-height: 28px; font-weight: 600; color: #191919; }
   .card.pro .per-mo { color: var(--pro); }
   .price .cur { font-size: 24px; letter-spacing: 0; }
-  .per-credit .val .cur { font-size: 14px; }
   .sub-features li { font-weight: 600; font-size: 16px; line-height: 24px; color: var(--text-strong); align-items: flex-start; }
   .sub-features li img { margin-top: 2px; }
   .sub-features .hl { font-weight: 600; }
@@ -720,7 +707,6 @@
     border: 0;
     background-image: linear-gradient(88deg, #ffb802 0%, #ffa51c 33%, #ff8800 100%);
   }
-  .slider-block.compact .credit-amount { padding-bottom: 8px; }
 
   /* ---------- Header ---------- */
   .site-header {
@@ -1035,40 +1021,35 @@
     .usage li b { flex-basis: 64px; }
   }
   @media (max-width: 360px) {
-    .per-credit .val { font-size: 17px; }
     .labels { font-size: 11px; }
   }
 
 
-  /* Version A (orange): accents follow the Get Pro Pack CTA gradient instead of brand blue */
-  html[data-ab="a"] .slider-block {
+  /* Orange slider: accents follow the Get Pro Pack CTA gradient instead of brand blue */
+  .slider-block {
     --pro-gradient: linear-gradient(88.46deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%);
     border-color: rgba(255, 136, 0, 0.2);
     background: rgba(255, 136, 0, 0.05);
   }
-  html[data-ab="a"] .slider-block .track .progress { background: var(--pro-gradient); }
-  html[data-ab="a"] .slider-block .track .hint-trail { background: linear-gradient(90deg, rgba(255,136,0,0) 0%, rgba(255,165,28,.25) 40%, #ff8800 100%); }
-  html[data-ab="a"] .slider-block .track .dots i.is-passed { background: #ff8800; }
-  html[data-ab="a"] .slider-block .track:focus-visible .handle { box-shadow: 0 0 0 3px rgba(255,136,0,.35); }
-  html[data-ab="a"] [data-sub="pro"] .card.pro {
+  .slider-block .track .progress { background: var(--pro-gradient); }
+  .slider-block .track .hint-trail { background: linear-gradient(90deg, rgba(255,136,0,0) 0%, rgba(255,165,28,.25) 40%, #ff8800 100%); }
+  .slider-block .track .dots i.is-passed { background: #ff8800; }
+  .slider-block .track:focus-visible .handle { box-shadow: 0 0 0 3px rgba(255,136,0,.35); }
+  [data-sub="pro"] .card.pro {
     background-image:
       linear-gradient(130deg, rgba(255,255,255,0) 15%, #fff 52%),
       url("data:image/svg+xml;utf8,<svg viewBox='0 0 380 608' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='0.15'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(38.033 33.421 -24.429 27.256 -0.33454 4.7205)'><stop stop-color='%23ffe94d' offset='0'/><stop stop-color='%23ffd23f' offset='0.25'/><stop stop-color='%23ffb63a' offset='0.5'/><stop stop-color='%23ff9b45' offset='0.75'/><stop stop-color='%23ff8a5c' offset='1'/></radialGradient></defs></svg>");
   }
-  html[data-ab="a"] [data-sub="pro"] .card.pro .hl { color: #ea7d00; }
-  [data-sub="pro"] .card.pro :is(.price, .per-mo) { color: var(--text-strong); } /* both versions */
-  /* A/B review: A = tooltip only, B = credit count only (switch with ?ab=a / ?ab=b or the floating toggle) */
-  html[data-ab="a"] .slider-block .credit-amount { display: none; }
-  html[data-ab="a"] .slider-block { padding: 32px 16px 12px; } /* tooltip pokes ~8px above the border, still clear of the CTA */
-  html[data-ab="b"] .handle-tip { display: none; }
-  html[data-ab="b"] .slider-block { padding: 12px 16px; }
-  html[data-ab="b"] .slider-block .credit-amount { order: -1; }
-  .ab-switch { position: fixed; z-index: 100; right: 16px; bottom: 16px; display: flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--fill-inverse-strong); box-shadow: 0 8px 24px rgba(0,0,0,.16); font: 600 14px/20px var(--font-body); }
-  .ab-switch span { padding: 0 6px 0 10px; align-self: center; color: var(--text-weak); }
-  .ab-switch button { min-width: 36px; height: 32px; border: 0; border-radius: 999px; background: none; color: var(--text-strong); font: inherit; cursor: pointer; }
-  .ab-switch button:hover { background: var(--fill-hover); }
-  .ab-switch button[aria-pressed="true"] { background: var(--brand); color: #fff; }
-  .ab-switch button:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  [data-sub="pro"] .card.pro .hl { color: #ea7d00; }
+  [data-sub="pro"] .card.pro :is(.price, .per-mo) { color: var(--text-strong); }
+  .slider-block { padding: 32px 16px 12px; } /* tooltip pokes ~8px above the border, still clear of the CTA */
+  /* Floating review switch: turns the Pro holiday discount on/off (?discount=on|off) */
+  .demo-switch { position: fixed; z-index: 100; right: 16px; bottom: 16px; display: flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--fill-inverse-strong); box-shadow: 0 8px 24px rgba(0,0,0,.16); font: 600 14px/20px var(--font-body); }
+  .demo-switch span { padding: 0 6px 0 10px; align-self: center; color: var(--text-weak); }
+  .demo-switch button { min-width: 44px; height: 32px; padding: 0 10px; border: 0; border-radius: 999px; background: none; color: var(--text-strong); font: inherit; cursor: pointer; }
+  .demo-switch button:hover { background: var(--fill-hover); }
+  .demo-switch button[aria-pressed="true"] { background: var(--brand); color: #fff; }
+  .demo-switch button:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -1201,13 +1182,13 @@
           <button class="btn btn-pro" type="button">Get Pro Pack</button>
           <div class="slider-block"></div>
           <ul class="features sub-features">
-            <li><img src="assets/circletick.svg" alt=""><span><b class="hl"><span data-bind="pro-credits">300</span> Credits</b> / per month</span></li>
-            <li><img src="assets/circletick.svg" alt=""><span>Watermark-free, High-quality Downloads</span></li>
-            <li><img src="assets/circletick.svg" alt=""><span>Batch Photo Editing</span></li>
-            <li><img src="assets/circletick.svg" alt=""><span>100 GB Cloud Storage</span></li>
-            <li><img src="assets/circletick.svg" alt=""><span><b class="hl">Daily FREE</b> AI Agent Chats for Quick Edits</span></li>
-            <li><img src="assets/circletick.svg" alt=""><span><b class="hl">40% OFF</b> Additional Credit Purchases</span></li>
-            <li><img src="assets/circletick.svg" alt=""><span>Commercial Use Rights Included</span></li>
+            <li><img src="assets/circletick-orange.svg" alt=""><span><b class="hl"><span data-bind="pro-credits">300</span> Credits</b> / per month</span></li>
+            <li><img src="assets/circletick-orange.svg" alt=""><span>Watermark-free, High-quality Downloads</span></li>
+            <li><img src="assets/circletick-orange.svg" alt=""><span>Batch Photo Editing</span></li>
+            <li><img src="assets/circletick-orange.svg" alt=""><span>100 GB Cloud Storage</span></li>
+            <li><img src="assets/circletick-orange.svg" alt=""><span><b class="hl">Daily FREE</b> AI Agent Chats for Quick Edits</span></li>
+            <li><img src="assets/circletick-orange.svg" alt=""><span><b class="hl">40% OFF</b> Additional Credit Purchases</span></li>
+            <li><img src="assets/circletick-orange.svg" alt=""><span>Commercial Use Rights Included</span></li>
           </ul>
           <div class="agent-links">
             <div class="agent-row">
@@ -1332,24 +1313,17 @@
       <div class="progress"></div>
       <div class="dots" aria-hidden="true"></div>
       <img class="swipe-hint" src="assets/finger-pointer.svg" alt="" width="42" height="42" draggable="false">
-      <img class="handle" src="assets/handle.svg" alt="" width="26" height="26" draggable="false">
+      <img class="handle" src="assets/handle-orange.svg" alt="" width="26" height="26" draggable="false">
       <span class="handle-tip" aria-hidden="true"><img src="assets/coin.svg" alt="" width="16" height="16"><span class="tip-text"></span></span>
     </div>
   </div>
   <div class="labels"></div>
-  <div class="credit-amount">
-    <img src="assets/coin.svg" alt="">
-    <div class="row">
-      <div class="credit"><span class="num" data-bind="credits">500</span><span class="unit">credits</span></div>
-      <div class="per-credit"></div>
-    </div>
-  </div>
 </template>
 
-<div class="ab-switch" role="group" aria-label="Slider variant">
-  <span>Version</span>
-  <button type="button" data-ab="a">A</button>
-  <button type="button" data-ab="b">B</button>
+<div class="demo-switch" role="group" aria-label="Holiday discount">
+  <span>Discount</span>
+  <button type="button" data-discount="on">On</button>
+  <button type="button" data-discount="off">Off</button>
 </div>
 <script>
   /* ===== Currency formatting (placeholder rates per 1 USD — replace with real price tables) ===== */
@@ -1412,7 +1386,6 @@
     if (setup) setup(block);
     const track = block.querySelector('.track');
     const labels = block.querySelector('.labels');
-    const creditsEl = block.querySelector('[data-bind="credits"]');
     track.setAttribute('aria-valuemin', stops[0]);
     track.setAttribute('aria-valuemax', stops[stops.length - 1]);
     stops.forEach((c, i) => {
@@ -1455,13 +1428,6 @@
         setTimeout(() => { track.classList.add('hinting'); requestAnimationFrame(coverDots); }, 400);
       }
     }, { threshold: 0.6 }).observe(track);
-    // Replays the hint from the start (used when switching A/B versions)
-    track.addEventListener('replayhint', () => {
-      track.classList.remove('hinting');
-      void track.offsetWidth; // restart the CSS animations
-      track.classList.add('hinting');
-      requestAnimationFrame(coverDots);
-    });
     dots.innerHTML = stops.map((_, i) => `<i style="left:${posFor(i)}"></i>`).join('');
 
     function set(i) {
@@ -1472,7 +1438,6 @@
       [...labels.children].forEach((b, j) => b.classList.toggle('is-active', j === index));
       [...dots.children].forEach((d, j) => { d.classList.toggle('is-passed', j < index); d.classList.toggle('is-current', j === index); });
       track.querySelector('.handle-tip .tip-text').textContent = `${fmtNum(stops[index])} credits`;
-      creditsEl.textContent = fmtNum(stops[index]);
       onChange(index);
     }
 
@@ -1858,24 +1823,17 @@
       }
     });
   }));
-  // A/B variant toggle for review; the choice is kept in the URL so each version can be shared as a link
+  // Discount review switch; the choice is kept in the URL so each state can be shared as a link
   (() => {
-    const btns = document.querySelectorAll('.ab-switch button');
-    const apply = v => {
-      document.documentElement.dataset.ab = v;
-      // Version A swaps the subscription Pro card's blue icons for orange copies
-      document.querySelectorAll('[data-sub="pro"] .card.pro img').forEach(img => {
-        const m = img.getAttribute('src').match(/^assets\/(handle|circletick)(-orange)?\.svg$/);
-        if (m) img.src = `assets/${m[1]}${v === 'a' ? '-orange' : ''}.svg`;
-      });
-      btns.forEach(b => b.setAttribute('aria-pressed', b.dataset.ab === v));
-      const url = new URL(location.href); url.searchParams.set('ab', v); history.replaceState(null, '', url);
+    const btns = document.querySelectorAll('.demo-switch button');
+    const apply = on => {
+      SUB.holidayDiscount = on ? 0.3 : 0;
+      btns.forEach(b => b.setAttribute('aria-pressed', (b.dataset.discount === 'on') === on));
+      const url = new URL(location.href); url.searchParams.set('discount', on ? 'on' : 'off'); history.replaceState(null, '', url);
+      renderSub();
     };
-    btns.forEach(b => b.addEventListener('click', () => {
-      apply(b.dataset.ab);
-      document.querySelectorAll('.track').forEach(t => t.dispatchEvent(new Event('replayhint')));
-    }));
-    apply(new URLSearchParams(location.search).get('ab') === 'b' ? 'b' : 'a');
+    btns.forEach(b => b.addEventListener('click', () => apply(b.dataset.discount === 'on')));
+    apply(new URLSearchParams(location.search).get('discount') === 'on');
   })();
 </script>
 </body>
