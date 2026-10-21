@@ -35,6 +35,9 @@
     -webkit-font-smoothing: antialiased;
   }
   p { margin: 0; }
+  /* Keyboard focus ring in the brand color (replaces the browser default) */
+  :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  :focus:not(:focus-visible) { outline: none; }
   button { font: inherit; }
 
   /* ---------- Page ---------- */
@@ -954,8 +957,8 @@
     <h1 class="swap"><span data-panel="sub">Choose the Right Plan for you</span><span data-panel="payg" class="is-off" aria-hidden="true">Choose Your Perfect Pack</span></h1>
     <div class="tab-wrap">
       <div class="tabs" role="tablist">
-        <button class="tab is-active" role="tab" aria-selected="true" data-tab="sub" data-currency="USD">Subscription</button>
-        <button class="tab" role="tab" aria-selected="false" data-tab="payg" data-currency="TWD">Pay As You Go</button>
+        <button class="tab is-active" role="tab" aria-selected="true" data-tab="sub">Subscription</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="payg">Pay As You Go</button>
       </div>
       <!-- both rows share one grid cell so switching tabs never changes the height -->
       <div class="tab-sub swap">
@@ -1500,7 +1503,6 @@
   const curLabel = document.querySelector('.currency [data-currency]');
   curMenu.innerHTML = CURRENCIES.map(c => `<li role="option" data-value="${c}">${c}</li>`).join('');
 
-  let currencyPicked = false; // once the user picks one, it stays across tabs
   function setCurrency(code) {
     currency = code;
     curLabel.textContent = code;
@@ -1516,7 +1518,6 @@
   curMenu.addEventListener('click', e => {
     const li = e.target.closest('li');
     if (!li) return;
-    currencyPicked = true;
     setCurrency(li.dataset.value);
     openMenu(false);
     curBtn.focus();
@@ -1644,7 +1645,6 @@
         p.hidden = off;
       }
     });
-    if (!currencyPicked) setCurrency(tab.dataset.currency);
   }));
 </script>
 </body>
