@@ -289,6 +289,12 @@
     font-variant-numeric: tabular-nums;
   }
   .card.pro .price { color: var(--pro); }
+  /* Price roll: changed characters slide down to the new value (see rollPrice) */
+  .price .roll { display: inline-block; height: 1lh; overflow: hidden; vertical-align: top; }
+  .price .roll-col { display: block; animation: roll-down .4s ease-in-out both; }
+  .price .roll-col > span { display: block; text-align: center; }
+  @keyframes roll-down { from { transform: translateY(-50%); } to { transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) { .price .roll-col { animation: none; transform: none; } }
 
   .strike { position: relative; display: inline-flex; align-items: center; }
   .strike img { position: absolute; left: 0; width: 100%; height: 2px; top: 50%; transform: translateY(-50%); }
@@ -406,6 +412,7 @@
   }
   .track .dots i.is-passed { background: var(--fill-selected); box-shadow: none; }
   .track .dots i.is-current, .track .dots i:first-child { opacity: 0; }
+  .track .dots i.is-covered { opacity: 0; }
   .track .handle { z-index: 1; }
   /* Swipe hint (like competitor sliders): a finger drags from the handle one stop to the right and back.
      Plays twice the first time the slider scrolls into view; stops on any interaction. */
@@ -414,9 +421,9 @@
     z-index: 2;
     top: 12px; /* fingertip touches the handle */
     left: var(--pos);
-    margin-left: -10.5px; /* fingertip sits at x≈37.5% of the icon */
-    width: 28px;
-    height: 28px;
+    margin-left: -15.75px; /* fingertip sits at x≈37.5% of the icon */
+    width: 42px;
+    height: 42px;
     filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
     opacity: 0;
     pointer-events: none;
@@ -449,6 +456,8 @@
     filter: drop-shadow(0 8px 12px rgba(0,0,0,0.16)); /* one shadow around bubble + arrow */
     pointer-events: none;
   }
+  .handle-tip { display: inline-flex; align-items: center; gap: 4px; }
+  .handle-tip img { flex: none; width: 16px; height: 16px; }
   .handle-tip::after {
     content: "";
     position: absolute;
@@ -461,7 +470,7 @@
   }
   .track:not(.dragging) .handle-tip { transition: left .18s ease; }
   /* Gradient trail that fills the track behind the finger during the swipe hint */
-  .track .hint-trail { left: 4px; width: 0; opacity: 0; background: linear-gradient(90deg, rgba(3,173,226,0) 0%, rgba(3,173,226,.25) 40%, var(--brand) 100%); }
+  .track .hint-trail { z-index: 1; left: 4px; width: 0; opacity: 0; background: linear-gradient(90deg, rgba(3,173,226,0) 0%, rgba(3,173,226,.25) 40%, var(--brand) 100%); }
   .track.hinting .hint-trail { animation: hint-trail 2.4s ease-in-out 3; }
   @keyframes hint-trail {
     0%   { opacity: 0; width: 4px; }
@@ -593,7 +602,7 @@
     display: flex;
     flex-direction: column;
     padding: 12px 20px;
-    border: 1.5px solid var(--stroke-focus);
+    background: var(--fill-weaker);
     border-radius: 16px;
   }
   .agent-row { position: relative; display: flex; align-items: center; gap: 4px; min-height: 32px; }
@@ -1029,6 +1038,37 @@
     .per-credit .val { font-size: 17px; }
     .labels { font-size: 11px; }
   }
+
+
+  /* Version A (orange): accents follow the Get Pro Pack CTA gradient instead of brand blue */
+  html[data-ab="a"] .slider-block {
+    --pro-gradient: linear-gradient(88.46deg, #ffb802 0%, #ffa51c 32.565%, #ff8800 99.797%);
+    border-color: rgba(255, 136, 0, 0.2);
+    background: rgba(255, 136, 0, 0.05);
+  }
+  html[data-ab="a"] .slider-block .track .progress { background: var(--pro-gradient); }
+  html[data-ab="a"] .slider-block .track .hint-trail { background: linear-gradient(90deg, rgba(255,136,0,0) 0%, rgba(255,165,28,.25) 40%, #ff8800 100%); }
+  html[data-ab="a"] .slider-block .track .dots i.is-passed { background: #ff8800; }
+  html[data-ab="a"] .slider-block .track:focus-visible .handle { box-shadow: 0 0 0 3px rgba(255,136,0,.35); }
+  html[data-ab="a"] [data-sub="pro"] .card.pro {
+    background-image:
+      linear-gradient(130deg, rgba(255,255,255,0) 15%, #fff 52%),
+      url("data:image/svg+xml;utf8,<svg viewBox='0 0 380 608' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='0.15'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(38.033 33.421 -24.429 27.256 -0.33454 4.7205)'><stop stop-color='%23ffe94d' offset='0'/><stop stop-color='%23ffd23f' offset='0.25'/><stop stop-color='%23ffb63a' offset='0.5'/><stop stop-color='%23ff9b45' offset='0.75'/><stop stop-color='%23ff8a5c' offset='1'/></radialGradient></defs></svg>");
+  }
+  html[data-ab="a"] [data-sub="pro"] .card.pro .hl { color: #ea7d00; }
+  [data-sub="pro"] .card.pro :is(.price, .per-mo) { color: var(--text-strong); } /* both versions */
+  /* A/B review: A = tooltip only, B = credit count only (switch with ?ab=a / ?ab=b or the floating toggle) */
+  html[data-ab="a"] .slider-block .credit-amount { display: none; }
+  html[data-ab="a"] .slider-block { padding: 32px 16px 12px; } /* tooltip pokes ~8px above the border, still clear of the CTA */
+  html[data-ab="b"] .handle-tip { display: none; }
+  html[data-ab="b"] .slider-block { padding: 12px 16px; }
+  html[data-ab="b"] .slider-block .credit-amount { order: -1; }
+  .ab-switch { position: fixed; z-index: 100; right: 16px; bottom: 16px; display: flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--fill-inverse-strong); box-shadow: 0 8px 24px rgba(0,0,0,.16); font: 600 14px/20px var(--font-body); }
+  .ab-switch span { padding: 0 6px 0 10px; align-self: center; color: var(--text-weak); }
+  .ab-switch button { min-width: 36px; height: 32px; border: 0; border-radius: 999px; background: none; color: var(--text-strong); font: inherit; cursor: pointer; }
+  .ab-switch button:hover { background: var(--fill-hover); }
+  .ab-switch button[aria-pressed="true"] { background: var(--brand); color: #fff; }
+  .ab-switch button:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -1291,9 +1331,9 @@
       <div class="hint-trail"></div>
       <div class="progress"></div>
       <div class="dots" aria-hidden="true"></div>
-      <img class="swipe-hint" src="assets/finger-pointer.svg" alt="" width="28" height="28" draggable="false">
+      <img class="swipe-hint" src="assets/finger-pointer.svg" alt="" width="42" height="42" draggable="false">
       <img class="handle" src="assets/handle.svg" alt="" width="26" height="26" draggable="false">
-      <span class="handle-tip" aria-hidden="true"></span>
+      <span class="handle-tip" aria-hidden="true"><img src="assets/coin.svg" alt="" width="16" height="16"><span class="tip-text"></span></span>
     </div>
   </div>
   <div class="labels"></div>
@@ -1306,6 +1346,11 @@
   </div>
 </template>
 
+<div class="ab-switch" role="group" aria-label="Slider variant">
+  <span>Version</span>
+  <button type="button" data-ab="a">A</button>
+  <button type="button" data-ab="b">B</button>
+</div>
 <script>
   /* ===== Currency formatting (placeholder rates per 1 USD — replace with real price tables) ===== */
   const CUR = {
@@ -1344,6 +1389,21 @@
   // Shrinks a letter prefix (NT, HK, A, Rp…) so the amount stays the focus.
   const smallPrefix = str => str.replace(/^(\p{L}+)/u, '<span class="cur">$1</span>');
   const fmtNum = n => n.toLocaleString('en-US');
+  // Writes a price like smallPrefix() would, but rolls each changed character down from the previous value
+  function rollPrice(el, str) {
+    const [, prefix = '', body] = str.match(/^(\p{L}+)?(.*)$/u);
+    const prev = el.dataset.roll, prevPrefix = el.dataset.rollPrefix;
+    el.dataset.roll = body;
+    el.dataset.rollPrefix = prefix;
+    const head = prefix ? `<span class="cur">${prefix}</span>` : '';
+    if (prev === body && prevPrefix === prefix) return;
+    if (prev == null || prevPrefix !== prefix) { el.innerHTML = head + body; return; }
+    const off = body.length - prev.length; // align old and new from the right
+    el.innerHTML = head + [...body].map((ch, i) => {
+      const was = prev[i - off] ?? '';
+      return was === ch ? ch : `<span class="roll"><span class="roll-col"><span>${ch}</span><span aria-hidden="true">${was || '&nbsp;'}</span></span></span>`;
+    }).join('');
+  }
 
   // Builds a 6-stop snapping credit slider inside `block`; calls onChange(index) on every change.
   // `setup(block)` runs after the markup exists and before the first onChange.
@@ -1370,6 +1430,21 @@
     const dots = block.querySelector('.dots');
     track.style.setProperty('--steps', stops.length - 1);
     // Swipe hint: play once when the slider first scrolls into view; cancel on interaction
+    // While the trail is visible, hide each dot it has reached so the gradient reads as one solid fill
+    const trail = track.querySelector('.hint-trail');
+    const coverDots = () => {
+      if (!track.classList.contains('hinting')) {
+        [...dots.children].forEach(d => d.classList.remove('is-covered'));
+        return;
+      }
+      const shown = parseFloat(getComputedStyle(trail).opacity) > 0.4;
+      const end = trail.getBoundingClientRect().right;
+      [...dots.children].forEach(d => {
+        const r = d.getBoundingClientRect();
+        d.classList.toggle('is-covered', shown && end >= r.left + r.width / 2);
+      });
+      requestAnimationFrame(coverDots);
+    };
     const stopHint = () => track.classList.remove('hinting');
     ['pointerdown', 'keydown'].forEach(ev => track.addEventListener(ev, stopHint));
     track.querySelector('.swipe-hint').addEventListener('animationend', stopHint);
@@ -1377,7 +1452,7 @@
     new IntersectionObserver((entries, io) => {
       if (entries.some(e => e.isIntersecting)) {
         io.disconnect();
-        setTimeout(() => track.classList.add('hinting'), 400);
+        setTimeout(() => { track.classList.add('hinting'); requestAnimationFrame(coverDots); }, 400);
       }
     }, { threshold: 0.6 }).observe(track);
     dots.innerHTML = stops.map((_, i) => `<i style="left:${posFor(i)}"></i>`).join('');
@@ -1389,7 +1464,7 @@
       track.setAttribute('aria-valuetext', `${fmtNum(stops[index])} credits`);
       [...labels.children].forEach((b, j) => b.classList.toggle('is-active', j === index));
       [...dots.children].forEach((d, j) => { d.classList.toggle('is-passed', j < index); d.classList.toggle('is-current', j === index); });
-      track.querySelector('.handle-tip').textContent = `${fmtNum(stops[index])} credits`;
+      track.querySelector('.handle-tip .tip-text').textContent = `${fmtNum(stops[index])} credits`;
       creditsEl.textContent = fmtNum(stops[index]);
       onChange(index);
     }
@@ -1464,7 +1539,7 @@
     const proNow = Math.floor(Math.round(proList * 100) * (1 - SUB.holidayDiscount) + 1e-6) / 100;
     $sub('free-price').innerHTML = smallPrefix(money(0, 'USD').replace(/\.0+$/, ''));
     $sub('plus-price').innerHTML = smallPrefix(money(yearly ? SUB.plusYearlyPerMo : SUB.plusMonthly, 'USD'));
-    $sub('pro-price').innerHTML = smallPrefix(money(proNow, 'USD'));
+    rollPrice($sub('pro-price'), money(proNow, 'USD'));
     $sub('pro-og').textContent = money(proList, 'USD');
     $sub('pro-og-wrap').hidden = !SUB.holidayDiscount;
     $sub('pro-badge').hidden = !SUB.holidayDiscount;
@@ -1776,6 +1851,22 @@
       }
     });
   }));
+  // A/B variant toggle for review; the choice is kept in the URL so each version can be shared as a link
+  (() => {
+    const btns = document.querySelectorAll('.ab-switch button');
+    const apply = v => {
+      document.documentElement.dataset.ab = v;
+      // Version A swaps the subscription Pro card's blue icons for orange copies
+      document.querySelectorAll('[data-sub="pro"] .card.pro img').forEach(img => {
+        const m = img.getAttribute('src').match(/^assets\/(handle|circletick)(-orange)?\.svg$/);
+        if (m) img.src = `assets/${m[1]}${v === 'a' ? '-orange' : ''}.svg`;
+      });
+      btns.forEach(b => b.setAttribute('aria-pressed', b.dataset.ab === v));
+      const url = new URL(location.href); url.searchParams.set('ab', v); history.replaceState(null, '', url);
+    };
+    btns.forEach(b => b.addEventListener('click', () => apply(b.dataset.ab)));
+    apply(new URLSearchParams(location.search).get('ab') === 'b' ? 'b' : 'a');
+  })();
 </script>
 </body>
 </html>
