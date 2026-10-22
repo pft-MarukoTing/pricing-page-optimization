@@ -7,7 +7,7 @@
 | 檔案 | 範圍 |
 |---|---|
 | [01-pricing-cards.md](01-pricing-cards.md) | 上半部：標題、Subscription / Pay As You Go 分頁、Monthly / Yearly、幣別下拉、See API Pricing、所有方案卡片（含 Pro 橘色 credit slider、手指滑動提示、價格滾動動畫、Holiday discount、AI Agent 區塊、PAYG 點數包）與 RWD |
-| [02-compare-all-plans.md](02-compare-all-plans.md) | 下半部：Compare All Plans 表格（sticky 方案列 + 漸層遮罩、可收合群組、手機兩行版型、完整表格內容、Usage details 錨點） |
+| [02-compare-all-plans.md](02-compare-all-plans.md) | 下半部：Compare All Plans 表格的版型與互動（sticky 方案列 + 漸層遮罩、可收合群組、手機兩行版型、Usage details 錨點）。表格內容由後台團隊設定，沿用現有資料來源，不寫死 |
 
 ## 怎麼用
 
@@ -40,4 +40,3 @@
 - 各幣別的正式價目表（prototype 的匯率是暫時的換算）。
 - TWD 5,000 / 10,000 / 20,000 點數包價格（目前是 placeholder）。
 - Holiday discount 開關：目前預設關閉（`holidayDiscount = 0`），開啟為 30%。prototype 右下角的 Discount On/Off 只是給審稿用，**不要上線**。
-- 表格中 Text to Video、Video Generation 的 credit cost（目前顯示 "- -"）。

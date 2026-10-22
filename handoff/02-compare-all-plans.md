@@ -7,7 +7,9 @@
 
 You are updating the **"Compare All Plans"** section of our Next.js pricing page (`/pricing`), which sits right below the plan cards. Rebuild it to match the spec below exactly. Adapt the markup to our components / CSS modules, but keep every value.
 
-A complete working reference is in `index.html` (the `.compare` section and the `COMPARE` data array). When this spec and the reference disagree, the reference wins.
+**This is a layout / interaction change only.** The table content (groups, tools, credit costs and per-plan limits) is managed in our **back office by a dedicated team** and loaded from the existing data source. Keep reading rows from that source, never hard-code them, and render whatever it returns with the layout below. §7 shows sample content only.
+
+A complete working reference is in `index.html` (the `.compare` section; its `COMPARE` array is hard-coded sample data standing in for the back-office data). When this spec and the reference disagree, the reference wins.
 
 ## 0. Global rules
 - Fonts: Roboto (body), Wix Madefor Display (section title).
@@ -94,7 +96,44 @@ The plan header row **sticks under the site header** while the table scrolls.
   - Anything else → plain text
   - Cells are flex-centered with `gap: 6px`.
 - Credit Cost cells keep a number with its unit (e.g. "1 Image") on one line: use a non-breaking space between a digit and a following word.
-- Write units as clean singular / plural exactly as in the data below ("1 use / day", "2 uses / day", "1 credit", "2 credits").
+- **Singular / plural units (required).** Never show "(s)" (e.g. "2 use(s) / day", "1 credit(s)"). The front end decides each unit from the number in front of it:
+  - The number is exactly 1 and is **not** a range → singular: "1 use / day", "1 credit", "1 sec", "1 Image".
+  - Anything else → plural: "2 uses / day", "0 credits", "1.5 credits", ranges like "1 - 2 credits" and "2 - 3 secs", "20 images = 30 credits".
+  - A unit with no number in front → plural ("credit(s)" → "credits").
+  - Each number–unit pair in a string is decided on its own: "From 1 credit / 1 Image", "From 2 credits / 1 sec".
+  - If the back office gives structured data (count + unit), pluralize from the count. If it only gives text with "(s)", convert the text:
+
+  ```js
+  // "From 2 credit(s) / 1 sec(s)" → "From 2 credits / 1 sec"
+  const PLURAL = { use: 'uses', credit: 'credits', sec: 'secs', image: 'images', video: 'videos' };
+  const plural = w => {
+    const p = PLURAL[w.toLowerCase()] ?? `${w}s`;
+    return w[0] === w[0].toUpperCase() ? p[0].toUpperCase() + p.slice(1) : p; // keep "Image" capitalized
+  };
+  function formatUnits(text) {
+    return text
+      // "<number>[ - <number>] <unit>(s)"
+      .replace(/(\d[\d,.]*)(\s*-\s*\d[\d,.]*)?(\s+)([A-Za-z]+)\(s\)/g, (_, n, range, sp, unit) =>
+        `${n}${range ?? ''}${sp}${!range && Number(n.replace(/,/g, '')) === 1 ? unit : plural(unit)}`)
+      // a "<unit>(s)" with no number in front → plural
+      .replace(/\b([A-Za-z]+)\(s\)/g, (_, unit) => plural(unit));
+  }
+  ```
+
+  | Back office | Shown |
+  |---|---|
+  | `1 use(s) / day` | 1 use / day |
+  | `2 use(s) / day` | 2 uses / day |
+  | `2 use(s) / lifetime` | 2 uses / lifetime |
+  | `1 credit(s) / 1 sec(s)` | 1 credit / 1 sec |
+  | `1 credit(s) / 2 - 3 sec(s)` | 1 credit / 2 - 3 secs |
+  | `From 1 credit(s) / 1 Image(s)` | From 1 credit / 1 Image |
+  | `From 12 credit(s) / 1 video(s)` | From 12 credits / 1 video |
+  | `1 - 2 credit(s)` | 1 - 2 credits |
+  | `20 image(s) = 30 credit(s)` | 20 images = 30 credits |
+
+- Otherwise show the back office's text as-is.
+- Map cell values to icons: the back office's "included" value → tick icon, "not included" → minus icon, anything else → plain text.
 
 ## 5. Bottom note
 Below the groups, `margin-top: 24px; padding: 0 8px;` 16px / 24px, `#15171f`:
@@ -115,8 +154,15 @@ Below the groups, `margin-top: 24px; padding: 0 8px;` 16px / 24px, `#15171f`:
     - The credit cost on the right: `flex: 1 1 0; min-width: 0; text-align: right; padding: 8px 0 6px`. The cost takes whatever width the name leaves; it is not a fixed third.
   - **Line 2** holds the 3 plan cells (Free / Plus / Pro) in a 3-column grid. Row padding `0 4px`; cell padding `8px 4px 16px`; 14px / 20px.
 
-## 7. Data
+## 7. Sample content (for layout testing only)
+**Do not copy these rows into code.** Real rows come from the back office. They are listed so you can check the layout with realistic lengths: long tool names, long costs, and "- -" placeholders.
+
 Columns: **Tool · Credit Cost · Free · Plus · Pro**. `✓` = included, `–` = not included. "- -" is literal text.
+
+Rendering rules that must hold for any back-office data:
+- A group without a title (like the first one) renders with no title button and cannot collapse.
+- The group whose title is **"AI Agent"** gets `id="cmp-ai-agent"` (the cards' "Usage details" target). Prefer a stable key from the back office over matching the title text.
+- Groups and rows appear in the order the back office returns them.
 
 **(no title)**
 
@@ -195,7 +241,7 @@ Columns: **Tool · Credit Cost · Free · Plus · Pro**. `✓` = included, `–`
 | Batch Image Converter | - - | – | ✓ | ✓ |
 | Commercial use allowed | - - | – | – | ✓ |
 
-> Note for PM / RD: when this table was captured, "Text to Video" and "Video Generation" showed "From null credits / null secs" on the live site, so we show "- -". If the product team has newer tool lists or credit costs, keep this layout and update the rows from the CMS / API.
+> The back office decides the credit costs. If a value is missing (for example it would render as "null"), show "- -" instead of the raw text.
 
 ## 8. "Usage details" deep link (from the plan cards)
 When a card's "Usage details ↓" is clicked:
@@ -208,4 +254,5 @@ When a card's "Usage details ↓" is clicked:
 - [ ] The plan boxes are equal height; the buttons stay at the bottom; the hover brightens them.
 - [ ] Every group collapses and expands with a smooth height animation, and the chevron flips.
 - [ ] At ≤900px: 3 plan columns; each tool shows name + cost on line 1 and the three plan cells on line 2; no horizontal scroll at 320px.
+- [ ] No "(s)" anywhere in the table: every unit is singular after exactly 1 and plural otherwise, including ranges.
 - [ ] "Usage details" from any card lands on the expanded AI Agent group, fully visible under the sticky bars.
