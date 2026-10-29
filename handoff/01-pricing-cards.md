@@ -358,6 +358,7 @@ Cards, left to right: Free account · Standard Pack · Pro Exclusive Pack. On mo
   - The selected row has a `rgba(255,255,255,0.7)` background.
   - Each row shows the Standard per-credit price crossed out (12px / 16px, `--text-weaker`, line-through) above the Pro per-credit price.
   - Pro prices are teal `#00998a` (both the big price and the per-credit prices).
+  - **Per-pack promo tag (optional):** a pack row can carry a small tag right after "{N} credits" (gap 8px), e.g. **"30% off"** on the 2000-credit Pro pack. Tags are configured per plan and pack. Style (Figma 2387-19578): `padding: 2px 6px; border: 1px solid var(--stroke-inverse-strong); border-radius: 32px; background: var(--icon-success)` (`#067a57cc`); text white (`--text-inverse-strong`), Roboto 600, 10px / 16px; 22px tall in total.
 - Same footer text.
 - **Corner badge** "{x}% OFF", where x = `round((1 − pro / standard) × 100)`, i.e. 40% OFF.
   - Same position and type as the Subscription badge.

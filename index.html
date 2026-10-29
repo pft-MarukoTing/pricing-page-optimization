@@ -677,7 +677,9 @@
   .pack-row input:checked + .radio { border-color: var(--brand); background: var(--brand); }
   .pack-row input:checked + .radio::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; background: #fff; }
   .pack-row input:focus-visible + .radio { box-shadow: 0 0 0 3px rgba(3,173,226,.35); }
-  .pack-credits { flex: 1; min-width: 0; font-size: 15px; line-height: 22px; white-space: nowrap; }
+  .pack-credits { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; font-size: 15px; line-height: 22px; white-space: nowrap; }
+  /* Per-pack promo tag, e.g. "30% off" on one Pro pack (Figma 2387-19578) */
+  .pack-tag { flex: none; padding: 2px 6px; border: 1px solid var(--stroke-inverse-strong); border-radius: 32px; background: var(--icon-success); color: var(--text-inverse-strong); font-weight: 600; font-size: 10px; line-height: 16px; }
   .pack-price { display: flex; flex-direction: column; align-items: flex-end; text-align: right; white-space: nowrap; }
   .pack-now { font-size: 13px; line-height: 24px; }
   .pack-now b { font-weight: 600; font-size: 18px; }
@@ -1561,6 +1563,8 @@
      Other currencies are converted from USD. */
   const PAYG_PACKS = [100, 200, 500, 1000, 2000, 5000, 10000, 20000];
   const PAYG_VISIBLE = 5; // the rest appear under "Show more"
+  // Promo tags on single packs: { plan: { pack index: label } } — 2000 credits on Pro
+  const PAYG_TAGS = { pro: { 4: '30% off' } };
   const PAYG_TOTALS = {
     USD: {
       standard: [17.99, 31.99, 72.99, 129.99, 214.99, 449.99, 699.99, 999.99],
@@ -1583,7 +1587,7 @@
       <label class="pack-row${i >= PAYG_VISIBLE ? ' extra' : ''}"${i >= PAYG_VISIBLE ? ' hidden' : ''}>
         <input type="radio" name="pack-${plan}" value="${i}"${i === selected ? ' checked' : ''}>
         <span class="radio" aria-hidden="true"></span>
-        <span class="pack-credits">${c} credits</span>
+        <span class="pack-credits">${c} credits${PAYG_TAGS[plan]?.[i] ? `<span class="pack-tag">${PAYG_TAGS[plan][i]}</span>` : ''}</span>
         <span class="pack-price">
           ${isPro ? '<span class="pack-og" data-og></span>' : ''}
           <span class="pack-now"><b data-now></b><small>/credit</small></span>
