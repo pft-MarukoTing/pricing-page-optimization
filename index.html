@@ -112,6 +112,7 @@
   .swap { display: grid; justify-items: center; align-items: center; }
   .swap > * { grid-area: 1 / 1; transition: opacity .25s ease, visibility .25s; }
   .swap > .is-off { opacity: 0; visibility: hidden; }
+  .no-anim .swap > *, .no-anim .tab, .no-anim .tabs::before { transition: none !important; }
 
   /* New tab's cards ease in */
   @keyframes panel-in { from { opacity: 0; transform: translateY(8px); } }
@@ -1810,8 +1811,8 @@
     window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: smooth ? 'smooth' : 'auto' });
   });
 
-  /* ===== Tabs ===== */
-  document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
+  /* ===== Tabs ===== (?tab=payg deep-links to Pay As You Go; the choice is kept in the URL) */
+  function selectTab(tab) {
     document.querySelectorAll('.tab').forEach(t => {
       t.classList.toggle('is-active', t === tab);
       t.setAttribute('aria-selected', t === tab);
@@ -1826,7 +1827,18 @@
         p.hidden = off;
       }
     });
+  }
+  document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => {
+    selectTab(tab);
+    const url = new URL(location.href); url.searchParams.set('tab', tab.dataset.tab); history.replaceState(null, '', url);
   }));
+  // Deep link: switch before first paint, with transitions off so nothing crossfades or slides in
+  const linkedTab = [...document.querySelectorAll('.tab')].find(t => t.dataset.tab === new URLSearchParams(location.search).get('tab'));
+  if (linkedTab && !linkedTab.classList.contains('is-active')) {
+    document.documentElement.classList.add('no-anim');
+    selectTab(linkedTab);
+    requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.remove('no-anim')));
+  }
   // Discount review switch; the choice is kept in the URL so each state can be shared as a link
   (() => {
     const btns = document.querySelectorAll('.demo-switch button');
