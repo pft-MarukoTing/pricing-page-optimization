@@ -1053,7 +1053,104 @@
   .demo-switch button:hover { background: var(--fill-hover); }
   .demo-switch button[aria-pressed="true"] { background: var(--brand); color: #fff; }
   .demo-switch button:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+  /* ===================== Loading skeleton (eBug YCO261125P0010) =====================
+     While prices load, the real cards stay in place and their content turns into grey blocks, so nothing
+     shifts when the data arrives and no empty card, $0 price or "Save 0%" is ever shown.
+     html.pricing-pending  first 200 ms: cards invisible (fast responses never flash a skeleton)
+     html.pricing-loading  skeleton with a synced shimmer, shown at least 300 ms
+     html.pricing-ready    cards fade in (180 ms)
+     html.pricing-error    request failed: message + Try again in place of the cards */
+  :root { --sk-base: #E9EDF1; }
+  @keyframes sk-sweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+  @keyframes sk-fade { from { opacity: 0; } to { opacity: 1; } }
+
+  html.pricing-pending .plans .cards,
+  html.pricing-pending .billing .save { visibility: hidden; }
+
+  /* A few big blocks per card instead of one per element:
+     title pill · price · button · (Pro) slider · up to 3 feature lines · AI Agent box.
+     Everything else keeps its space but turns invisible, so the cards don't change size. */
+  html.pricing-loading .plans .cards .card :where(.plan-title, .price-row, .features li, .agent-links, .tools-box, .packs) > *,
+  html.pricing-loading .plans .cards .card :where(.slider-block, .btn) *,
+  html.pricing-loading .plans .cards .card :where(.show-more, .valid),
+  html.pricing-loading .plans .cards .badge { visibility: hidden !important; }   /* :where keeps this below the block rule */
+
+  html.pricing-loading .plans .cards .card :is(.plan-name, .tier-badge, .price, .btn, .slider-block, .agent-links, .tools-box, .packs),
+  html.pricing-loading .billing .save {
+    visibility: visible !important;
+    color: transparent !important; -webkit-text-fill-color: transparent !important; text-shadow: none !important;
+    background: var(--sk-base) !important; -webkit-background-clip: border-box !important; background-clip: border-box !important;
+    border-color: transparent !important; box-shadow: none !important; filter: none !important; animation: none !important;
+    pointer-events: none; user-select: none;
+  }
+  html.pricing-loading .plans .cards .card :is(.plan-name, .tier-badge) { width: 88px; white-space: nowrap; overflow: hidden; border-radius: 999px; }
+  html.pricing-loading .plans .cards .card .price { width: 132px; white-space: nowrap; overflow: hidden; border-radius: 12px; }
+  /* center the price block: "/mo" and the crossed-out price leave the row while loading
+     (a crossed-out price that already wrapped to its own line stays, so the card height doesn't change) */
+  html.pricing-loading .plans .cards .card .price-row > .per-mo,
+  html.pricing-loading .plans .cards .card .price-row:not(.is-wrapped) > .strike { position: absolute; }
+  html.pricing-loading .plans .cards .card .btn { border-radius: 999px; }
+  html.pricing-loading .plans .cards .card :is(.slider-block, .agent-links, .tools-box, .packs) { border-radius: 16px; }
+
+  /* feature list: 3 thin lines (70% / 90% / 55%), the rest of the list stays blank */
+  html.pricing-loading .plans .cards .card .features li { position: relative; }
+  html.pricing-loading .plans .cards .card .features li:nth-child(-n+3)::before {
+    content: ""; position: absolute; left: 0; top: 50%; width: 70%; height: 12px; margin-top: -6px;
+    border-radius: 6px; background: var(--sk-base);
+  }
+  html.pricing-loading .plans .cards .card .features li:nth-child(2)::before { width: 90%; }
+  html.pricing-loading .plans .cards .card .features li:nth-child(3)::before { width: 55%; }
+
+  /* neutral cards: no Pro tint */
+  html.pricing-loading .plans .cards .card.pro { background-image: none; }
+
+  /* one soft light sweep across each card (all cards in sync) */
+  html.pricing-loading .plans .cards .card { position: relative; overflow: hidden; }
+  html.pricing-loading .plans .cards .card::after {
+    content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none;
+    background: linear-gradient(100deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.75) 50%, rgba(255,255,255,0) 70%);
+    animation: sk-sweep 1.5s ease-in-out infinite;
+  }
+  /* controls that depend on prices wait for them */
+  html:is(.pricing-pending, .pricing-loading) :is(.billing, .currency-wrap) { pointer-events: none; opacity: .6; }
+
+  /* cards fade in with the page's own panel-in (replayed by JS); the Save badge fades on its own */
+  html.pricing-ready .billing .save { animation: sk-fade .18s ease-out both; }
+
+  html.pricing-error .plans .cards { display: none !important; }
+  html.pricing-error .billing .save { visibility: hidden; }   /* no discount number without prices */
+  .pricing-error-box { display: none; }
+  html.pricing-error .pricing-error-box {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center;
+    width: 100%; max-width: 560px; min-height: 360px; margin: 0 auto; padding: 40px 24px;
+    border-radius: 32px; background: #fff; box-shadow: 0 12px 15px rgba(0,0,0,0.12);
+  }
+  .pricing-error-box .ic { width: 48px; height: 48px; border-radius: 50%; background: var(--sk-base); display: grid; place-items: center; }
+  .pricing-error-box h3 { margin: 4px 0 0; font-size: 20px; line-height: 28px; font-weight: 700; color: #15171f; }
+  .pricing-error-box p { margin: 0; font-size: 14px; line-height: 20px; color: rgba(17,24,26,.6); }
+  .pricing-error-box button { margin-top: 8px; padding: 10px 28px; border: 0; border-radius: 999px; background: var(--brand); color: #fff;
+    font: 600 16px/24px var(--font-body, inherit); cursor: pointer; }
+  .pricing-error-box button:hover { filter: brightness(1.05); }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.pricing-loading .plans .cards .card::after { display: none; }
+    html.pricing-ready .billing .save { animation: none; }
+  }
+
+  /* Loading demo switcher (prototype only), bottom-left */
+  .load-demo { position: fixed; z-index: 100; left: 16px; bottom: 16px; display: flex; align-items: center; padding: 4px; gap: 4px;
+    border-radius: 999px; background: #15171F; box-shadow: 0 8px 24px rgba(0,0,0,.16); font: 600 14px/20px var(--font-body, inherit); }
+  .load-demo span { padding: 0 6px 0 10px; color: rgba(255,255,255,.6); white-space: nowrap; }
+  .load-demo button { border: 0; border-radius: 999px; padding: 6px 12px; background: none; color: #fff; font: inherit; cursor: pointer; opacity: .75; white-space: nowrap; }
+  .load-demo button:hover { opacity: 1; }
+  .load-demo button[aria-pressed="true"] { background: #fff; color: #15171f; opacity: 1; }
+  @media (max-width: 640px) { .load-demo { left: 8px; bottom: 64px; font-size: 12px; }   /* sits above the Discount switch */ .load-demo span { display: none; } .load-demo button { padding: 5px 9px; } }
 </style>
+<script>
+  // Prices "load" on page open (simulated): hide the cards until the loader decides (see .pricing-* classes)
+  (function () { var m = new URLSearchParams(location.search).get('load'); if (m !== 'off') document.documentElement.classList.add('pricing-pending'); })();
+</script>
 </head>
 <body>
 <header class="site-header">
@@ -1851,6 +1948,65 @@
     btns.forEach(b => b.addEventListener('click', () => apply(b.dataset.discount === 'on')));
     apply(new URLSearchParams(location.search).get('discount') === 'on');
   })();
+</script>
+
+<!-- Loading-state demo (eBug YCO261125P0010): ?load=normal|slow|fast|error|off -->
+<div class="pricing-error-box" role="alert">
+  <div class="ic"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8A96A3" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/></svg></div>
+  <h3>Couldn't load prices</h3>
+  <p>Please check your connection and try again.</p>
+  <button type="button" data-retry>Try again</button>
+</div>
+<div class="load-demo" role="group" aria-label="Loading demo">
+  <span>Loading</span>
+  <button type="button" data-load="normal">Normal 1.5s</button>
+  <button type="button" data-load="slow">Slow 4s</button>
+  <button type="button" data-load="fast">Fast 0.1s</button>
+  <button type="button" data-load="error">Error</button>
+</div>
+<script>
+(function () {
+  var html = document.documentElement;
+  var SHOW_AFTER = 200;   // fast responses never flash a skeleton
+  var MIN_SHOW = 300;     // once shown, keep the skeleton at least this long
+  var MODES = { normal: { delay: 1500 }, slow: { delay: 4000 }, fast: { delay: 100 }, error: { delay: 1500, fail: true } };
+  var timers = [];
+  var box = document.querySelector('.pricing-error-box');
+  var toolbar = document.querySelector('.plans .toolbar');
+  if (toolbar) toolbar.after(box);
+  var btns = document.querySelectorAll('.load-demo button');
+
+  function clear() { timers.forEach(clearTimeout); timers = []; }
+  function setClass(c) { html.classList.remove('pricing-pending', 'pricing-loading', 'pricing-ready', 'pricing-error'); if (c) html.classList.add(c); }
+
+  function load(mode, opts) {
+    opts = opts || MODES[mode] || MODES.normal;
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.load === mode); });
+    var url = new URL(location.href); if (mode === 'normal') url.searchParams.delete('load'); else url.searchParams.set('load', mode); history.replaceState(null, '', url);
+    clear(); setClass('pricing-pending');
+    var shownAt = 0;
+    timers.push(setTimeout(function () { setClass('pricing-loading'); shownAt = Date.now(); }, SHOW_AFTER));
+    timers.push(setTimeout(function () {                      // "response" arrives
+      clear();
+      var wait = shownAt ? Math.max(0, MIN_SHOW - (Date.now() - shownAt)) : 0;
+      timers.push(setTimeout(function () {
+        if (opts.fail) { setClass('pricing-error'); return; }
+        setClass('pricing-ready');
+        document.querySelectorAll('.plans .cards').forEach(function (c) {   // replay the page's panel-in fade
+          c.style.animation = 'none'; void c.offsetWidth; c.style.animation = '';
+        });
+        timers.push(setTimeout(function () { html.classList.remove('pricing-ready'); }, 400));
+      }, wait));
+    }, opts.delay));
+  }
+
+  btns.forEach(function (b) { b.addEventListener('click', function () { load(b.dataset.load); }); });
+  box.querySelector('[data-retry]').addEventListener('click', function () { load('normal'); });
+
+  var start = new URLSearchParams(location.search).get('load');
+  if (start === 'off') { setClass(''); return; }
+  load(MODES[start] ? start : 'normal');
+})();
 </script>
 </body>
 </html>
